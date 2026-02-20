@@ -4,7 +4,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo "========================================"
-echo "    Starting GymFlow Manager Setup"
+echo "    Starting Graha Fitness Setup"
 echo "========================================"
 
 # Check Python installation

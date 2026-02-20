@@ -1,5 +1,5 @@
 /* ===========================
-   GymFlow — Frontend Application
+   Graha Fitness — Frontend Application
    Connected to FastAPI Backend
    =========================== */
 
@@ -19,6 +19,19 @@
     return 'Rp ' + Number(n).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
   function today() { return new Date().toISOString().split('T')[0]; }
+
+  function setLoading(btn, isLoading) {
+    if (!btn) return;
+    if (isLoading) {
+      btn.dataset.prevHtml = btn.innerHTML;
+      btn.classList.add('btn-is-loading');
+      btn.disabled = true;
+    } else {
+      btn.classList.remove('btn-is-loading');
+      btn.disabled = false;
+      if (btn.dataset.prevHtml) btn.innerHTML = btn.dataset.prevHtml;
+    }
+  }
 
   // ---- API Layer ----
   function getToken() {
@@ -806,8 +819,10 @@
     // Login form
     document.getElementById('loginForm').onsubmit = async (e) => {
       e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
       const username = document.getElementById('loginUser').value.trim();
       const password = document.getElementById('loginPass').value;
+      setLoading(btn, true);
       try {
         await doLogin(username, password);
         document.getElementById('loginError').style.display = 'none';
@@ -816,6 +831,8 @@
         const errEl = document.getElementById('loginError');
         errEl.textContent = 'Invalid username or password';
         errEl.style.display = 'block';
+      } finally {
+        setLoading(btn, false);
       }
     };
 

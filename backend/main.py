@@ -1,5 +1,5 @@
 """
-GymFlow — FastAPI Backend
+Graha Fitness — FastAPI Backend
 All REST endpoints with JWT auth and role-based permissions.
 
 Run:  python main.py
@@ -23,7 +23,7 @@ SECRET_KEY = "gymflow-secret-key-change-in-production"
 ALGORITHM = "HS256"
 TOKEN_EXPIRE_HOURS = 24
 
-app = FastAPI(title="GymFlow API", version="1.0.0")
+app = FastAPI(title="Graha Fitness API", version="1.0.0")
 
 # CORS — allow frontend
 app.add_middleware(
@@ -517,7 +517,7 @@ def on_startup():
         # Don't raise here, allow the app to start so logs can be seen
     
     port = os.environ.get("PORT", "8000")
-    print(f"🏋️ GymFlow API running on port {port}")
+    print(f"🏋️ Graha Fitness API running on port {port}")
     print(f"📄 Docs at /docs")
 
 

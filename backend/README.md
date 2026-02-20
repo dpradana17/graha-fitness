@@ -1,4 +1,4 @@
-# Backend Analysis and Setup Guide
+# Graha Fitness - Backend Analysis and Setup Guide
 
 ## 1. Project Analysis
 This backend is a REST API built with **FastAPI** (a modern Python framework).

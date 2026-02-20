@@ -1,5 +1,5 @@
 """
-GymFlow — Database Models & Setup (SQLAlchemy + SQLite)
+Graha Fitness — Database Models & Setup (SQLAlchemy + SQLite)
 """
 
 from sqlalchemy import create_engine, Column, String, Integer, BigInteger, Date, Text, ForeignKey, DateTime, pool

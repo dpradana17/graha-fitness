@@ -1,5 +1,5 @@
 /* ===========================
-   GymFlow — Design System
+   Graha Fitness — Design System
    =========================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -728,6 +728,33 @@ body::before {
 
 .btn-success:hover {
   background: rgba(16, 185, 129, 0.25);
+}
+
+/* --- Loading States --- */
+.btn-is-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  cursor: default;
+}
+
+.btn-is-loading::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: calc(50% - 9px);
+  left: calc(50% - 9px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: btnSpinner 0.6s linear infinite;
+}
+
+@keyframes btnSpinner {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* --- Select --- */
