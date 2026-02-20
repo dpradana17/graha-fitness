@@ -16,7 +16,7 @@ from typing import Optional
 from datetime import datetime, date, timedelta
 from jose import jwt, JWTError
 
-from database import init_db, get_db, User, Member, Attendance, Transaction, StockItem, StockMovement, generate_uuid
+from .database import init_db, get_db, User, Member, Attendance, Transaction, StockItem, StockMovement, generate_uuid
 
 # ---- Config ----
 SECRET_KEY = "gymflow-secret-key-change-in-production"
