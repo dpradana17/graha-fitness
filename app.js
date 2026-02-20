@@ -312,6 +312,7 @@
 
     document.getElementById('memberForm').onsubmit = async (e) => {
       e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
       const data = {
         name: document.getElementById('mfName').value.trim(),
         phone: document.getElementById('mfPhone').value.trim(),
@@ -321,6 +322,7 @@
         status: 'active',
       };
       if (!data.name) return;
+      setLoading(btn, true);
       try {
         if (isEdit) {
           await apiPut(`/members/${member.id}`, data);
@@ -331,6 +333,8 @@
         renderMembers();
       } catch (e) {
         alert('Error saving member: ' + e.message);
+      } finally {
+        setLoading(btn, false);
       }
     };
   }
@@ -485,6 +489,7 @@
 
     document.getElementById('txForm').onsubmit = async (e) => {
       e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
       const data = {
         type: document.getElementById('txType').value,
         date: document.getElementById('txDate').value,
@@ -494,6 +499,7 @@
         note: document.getElementById('txNote').value.trim(),
       };
       if (!data.category || !data.amount) return;
+      setLoading(btn, true);
       try {
         if (isEdit) {
           await apiPut(`/transactions/${tx.id}`, data);
@@ -504,6 +510,8 @@
         renderFinance();
       } catch (e) {
         alert('Error saving transaction: ' + e.message);
+      } finally {
+        setLoading(btn, false);
       }
     };
   }
@@ -629,6 +637,7 @@
 
     document.getElementById('stockForm').onsubmit = async (e) => {
       e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
       const data = {
         name: document.getElementById('sfName').value.trim(),
         category: document.getElementById('sfCategory').value.trim(),
@@ -637,6 +646,7 @@
         min_threshold: Number(document.getElementById('sfMin').value),
       };
       if (!data.name) return;
+      setLoading(btn, true);
       try {
         if (isEdit) {
           await apiPut(`/stock/${item.id}`, data);
@@ -647,6 +657,8 @@
         renderStock();
       } catch (e) {
         alert('Error saving item: ' + e.message);
+      } finally {
+        setLoading(btn, false);
       }
     };
   }
@@ -688,17 +700,21 @@
 
     document.getElementById('movementForm').onsubmit = async (e) => {
       e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
       const itemId = document.getElementById('mvItem').value;
       const type = document.getElementById('mvType').value;
       const qty = Number(document.getElementById('mvQty').value);
       const note = document.getElementById('mvNote').value.trim();
       if (!qty || qty <= 0) return;
+      setLoading(btn, true);
       try {
         await apiPost(`/stock/${itemId}/movement`, { type, quantity: qty, note });
         closeModal();
         renderStock();
       } catch (e) {
         alert('Error: ' + e.message);
+      } finally {
+        setLoading(btn, false);
       }
     };
   }
@@ -796,11 +812,13 @@
   }
 
   async function processScanCheckin(input, resultDiv) {
+    const btn = document.getElementById('btnScanCheckin');
     const raw = input.value.trim();
     if (!raw) return;
     let memberId = raw.startsWith('GYMFLOW-CHECKIN:') ? raw.replace('GYMFLOW-CHECKIN:', '') : raw;
 
     resultDiv.style.display = 'block';
+    setLoading(btn, true);
     try {
       const result = await apiPost(`/members/${memberId}/checkin`, {});
       resultDiv.innerHTML = `<div class="scan-feedback scan-success"><span style="font-size:2.5rem;">✅</span><p style="font-weight:600; font-size:1.2rem; margin:0.5rem 0;">Welcome, ${result.memberName}!</p><p style="color:var(--text-secondary);">Checked in at ${result.time}</p></div>`;
@@ -809,6 +827,8 @@
     } catch (e) {
       resultDiv.innerHTML = `<div class="scan-feedback scan-error"><span style="font-size:2.5rem;">❌</span><p style="font-weight:600; font-size:1.1rem; margin:0.5rem 0;">Check-in Failed</p><p style="color:var(--text-muted);">${e.message}</p></div>`;
       input.value = ''; input.focus();
+    } finally {
+      setLoading(btn, false);
     }
   }
 
