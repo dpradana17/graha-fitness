@@ -501,14 +501,22 @@ def list_stock_movements(user: User = Depends(get_current_user), db: Session = D
 
 @app.on_event("startup")
 def on_startup():
-    init_db()
-    print("🏋️ GymFlow API running at http://localhost:8000")
-    print("📄 Docs at http://localhost:8000/docs")
+    print("🚀 App starting up...")
+    try:
+        init_db()
+        print("✅ Database initialized successfully.")
+    except Exception as e:
+        print(f"❌ Database initialization failed: {e}")
+        # Don't raise here, allow the app to start so logs can be seen
+    
+    port = os.environ.get("PORT", "8000")
+    print(f"🏋️ GymFlow API running on port {port}")
+    print(f"📄 Docs at /docs")
 
 
 if __name__ == "__main__":
     import os
     import uvicorn
 
-    port = int(os.environ.get("PORT", 8000))
+    port = int(os.environ.get("PORT", 8080))
     uvicorn.run("main:app", host="0.0.0.0", port=port)

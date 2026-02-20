@@ -10,6 +10,12 @@ import os
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./gymflow.db")
 
+# Fix for older postgres:// prefixes (SQLAlchemy requires postgresql://)
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+print(f"📡 Connecting to database: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else 'SQLite'}")
+
 # PostgreSQL doesn't need "check_same_thread", SQLite does.
 if DATABASE_URL.startswith("postgresql"):
     engine = create_engine(DATABASE_URL)
