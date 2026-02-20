@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="GymFlow — Gym Management System with membership, attendance, finances, and food stock.">
+    <title>GymFlow — Gym Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+            <div class="login-header">
+                <span class="login-logo">💪</span>
+                <h1>GymFlow</h1>
+                <p>Sign in to your account</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUser" placeholder="Enter username" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter password" required>
+                </div>
+                <div class="login-error" id="loginError" style="display:none;"></div>
+                <button type="submit" class="btn btn-primary btn-login">Sign In</button>
+            </form>
+            <div class="login-hint">
+                <p>Demo accounts:</p>
+                <code>superadmin / admin123</code> &nbsp;•&nbsp; <code>admin / admin123</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== APP SHELL ==================== -->
+    <div class="app-shell" id="appShell" style="display:none;">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">💪</span>
+                    <span class="logo-text">GymFlow</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span class="toggle-icon">☰</span>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#members" class="nav-item" data-page="members">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Members</span>
+                </a>
+                <a href="#finance" class="nav-item" data-page="finance">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-label">Finance</span>
+                </a>
+                <a href="#stock" class="nav-item" data-page="stock">
+                    <span class="nav-icon">🥤</span>
+                    <span class="nav-label">Food Stock</span>
+                </a>
+                <a href="#scan" class="nav-item" data-page="scan">
+                    <span class="nav-icon">📷</span>
+                    <span class="nav-label">Scan Check-in</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-badge" id="userBadge">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Admin</span>
+                        <span class="user-role" id="userRole">admin</span>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-logout" id="btnLogout">Logout</button>
+                <div class="current-date" id="currentDate"></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+
+            <!-- ==================== DASHBOARD ==================== -->
+            <section class="page" id="page-dashboard">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p class="page-subtitle">Overview of your gym operations</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card stat-members">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dashTotalMembers">0</span>
+                            <span class="stat-label">Active Members</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-revenue">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dashMonthRevenue">Rp 0</span>
+                            <span class="stat-label">Monthly Revenue</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-checkins">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dashTodayCheckins">0</span>
+                            <span class="stat-label">Today's Check-ins</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-alerts">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dashLowStock">0</span>
+                            <span class="stat-label">Low Stock Alerts</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="card recent-activity">
+                        <div class="card-header">
+                            <h2>Recent Activity</h2>
+                        </div>
+                        <div class="card-body">
+                            <ul class="activity-list" id="dashRecentActivity">
+                                <li class="activity-empty">No recent activity</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card expiring-soon">
+                        <div class="card-header">
+                            <h2>Expiring Memberships</h2>
+                        </div>
+                        <div class="card-body">
+                            <ul class="expiry-list" id="dashExpiring">
+                                <li class="activity-empty">No expiring memberships</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== MEMBERS ==================== -->
+            <section class="page hidden" id="page-members">
+                <div class="page-header">
+                    <h1>Members & Attendance</h1>
+                    <p class="page-subtitle">Manage memberships, check-ins, and absences</p>
+                </div>
+                <div class="toolbar">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="memberSearch" placeholder="Search members..." autocomplete="off">
+                    </div>
+                    <button class="btn btn-primary" id="btnAddMember"><span>+</span> Add Member</button>
+                </div>
+                <div class="card">
+                    <div class="table-wrapper">
+                        <table class="data-table" id="membersTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Plan</th>
+                                    <th>Expires</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody"></tbody>
+                        </table>
+                        <div class="table-empty" id="membersEmpty">
+                            <span class="empty-icon">👥</span>
+                            <p>No members yet. Add your first member!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:1.5rem;">
+                    <div class="card-header">
+                        <h2>Today's Attendance</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="attendance-log" id="attendanceLog">
+                            <li class="activity-empty">No check-ins today</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== FINANCE ==================== -->
+            <section class="page hidden" id="page-finance">
+                <div class="page-header">
+                    <h1>Money Management</h1>
+                    <p class="page-subtitle">Track income, expenses, and financial health</p>
+                </div>
+                <div class="stats-grid stats-grid-3">
+                    <div class="stat-card stat-income">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="finIncome">Rp 0</span>
+                            <span class="stat-label">Monthly Income</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-expense">
+                        <div class="stat-icon">📉</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="finExpense">Rp 0</span>
+                            <span class="stat-label">Monthly Expenses</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-profit">
+                        <div class="stat-icon">💎</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="finProfit">Rp 0</span>
+                            <span class="stat-label">Net Profit</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="toolbar">
+                    <div class="filter-group">
+                        <select id="finMonthFilter" class="select-input">
+                            <option value="">All Months</option>
+                        </select>
+                        <select id="finTypeFilter" class="select-input">
+                            <option value="">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="btnAddTransaction"><span>+</span> Add Transaction</button>
+                </div>
+                <div class="card">
+                    <div class="table-wrapper">
+                        <table class="data-table" id="financeTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Member</th>
+                                    <th>Amount</th>
+                                    <th>Note</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="financeTableBody"></tbody>
+                        </table>
+                        <div class="table-empty" id="financeEmpty">
+                            <span class="empty-icon">💰</span>
+                            <p>No transactions yet. Start tracking your finances!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== FOOD STOCK ==================== -->
+            <section class="page hidden" id="page-stock">
+                <div class="page-header">
+                    <h1>Food Stock</h1>
+                    <p class="page-subtitle">Inventory management and stock alerts</p>
+                </div>
+                <div class="toolbar">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="stockSearch" placeholder="Search items..." autocomplete="off">
+                    </div>
+                    <div class="toolbar-actions">
+                        <button class="btn btn-secondary" id="btnStockMovement">📦 Stock Movement</button>
+                        <button class="btn btn-primary" id="btnAddStock"><span>+</span> Add Item</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="table-wrapper">
+                        <table class="data-table" id="stockTable">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockTableBody"></tbody>
+                        </table>
+                        <div class="table-empty" id="stockEmpty">
+                            <span class="empty-icon">🥤</span>
+                            <p>No stock items yet. Add your first item!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:1.5rem;">
+                    <div class="card-header">
+                        <h2>Recent Stock Movements</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="movement-log" id="stockMovementLog">
+                            <li class="activity-empty">No stock movements recorded</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SCAN CHECK-IN ==================== -->
+            <section class="page hidden" id="page-scan">
+                <div class="page-header">
+                    <h1>Scan Check-in</h1>
+                    <p class="page-subtitle">Members can check in by scanning their QR code</p>
+                </div>
+                <div class="scan-container">
+                    <div class="card scan-card">
+                        <div class="card-body" style="text-align:center; padding:2rem;">
+                            <div class="scan-input-area">
+                                <span style="font-size:3rem;">📷</span>
+                                <p style="color:var(--text-secondary); margin:1rem 0;">Enter or paste a member ID to
+                                    check in</p>
+                                <div class="form-group" style="max-width:400px; margin:0 auto;">
+                                    <input type="text" id="scanInput" placeholder="Scan QR code or paste Member ID..."
+                                        autocomplete="off">
+                                </div>
+                                <button class="btn btn-primary" id="btnScanCheckin" style="margin-top:0.5rem;">✅ Check
+                                    In</button>
+                            </div>
+                            <div id="scanResult" class="scan-result" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Title</h2>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
