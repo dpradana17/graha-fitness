@@ -38,20 +38,9 @@ app.add_middleware(
 def health_check():
     return {"status": "ok", "timestamp": datetime.now().isoformat()}
 
-# ---- Static Files (Frontend) ----
+# Static file configuration is moved to the bottom of the file to prevent routing conflicts
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-@app.get("/")
-async def read_index():
-    index_path = os.path.join(BASE_DIR, "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"error": "index.html not found"}
-
-# Specifically serve app.js and style.css to avoid mounting the whole root if possible
-# But for simplicity, we'll keep the mount but exclude backend folder to avoid recursion if any
-app.mount("/", StaticFiles(directory=BASE_DIR, html=True), name="static")
 
 
 # =====================
@@ -505,6 +494,17 @@ def list_stock_movements(user: User = Depends(get_current_user), db: Session = D
 # =====================
 #     STARTUP
 # =====================
+
+@app.get("/")
+async def read_index():
+    index_path = os.path.join(BASE_DIR, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"error": "index.html not found"}
+
+# Mount static files LAST to prevent intercepting API routes
+app.mount("/", StaticFiles(directory=BASE_DIR, html=True), name="static")
+
 
 @app.on_event("startup")
 def on_startup():
