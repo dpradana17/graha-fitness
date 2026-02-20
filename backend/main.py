@@ -8,6 +8,8 @@ Docs: http://localhost:8000/docs
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -31,6 +33,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ---- Static Files (Frontend) ----
+# Mount the parent directory to serve index.html, app.js, style.css
+# This is safe because FastAPI routes take precedence over mounted files
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+@app.get("/")
+async def read_index():
+    return FileResponse(os.path.join(BASE_DIR, "index.html"))
+
+app.mount("/", StaticFiles(directory=BASE_DIR), name="static")
 
 
 # =====================
