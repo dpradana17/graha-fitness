@@ -6,10 +6,16 @@ from sqlalchemy import create_engine, Column, String, Integer, BigInteger, Date,
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from datetime import datetime, date
 import uuid
+import os
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./gymflow.db")
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+# PostgreSQL doesn't need "check_same_thread", SQLite does.
+if DATABASE_URL.startswith("postgresql"):
+    engine = create_engine(DATABASE_URL)
+else:
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
 
