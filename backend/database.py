@@ -18,16 +18,13 @@ if DATABASE_URL and ("supabase" in DATABASE_URL or "postgres" in DATABASE_URL):
     elif DATABASE_URL.startswith("postgresql://"):
         DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
     
-    # Supabase Transaction Mode (6543) needs prepared_statements=false
-    if ":6543" in DATABASE_URL and "prepared_statements=" not in DATABASE_URL:
-        sep = "&" if "?" in DATABASE_URL else "?"
-        DATABASE_URL += f"{sep}prepared_statements=false"
-
-    # CRITICAL: pg8000 does not support the 'pgbouncer' parameter in the connection string
-    if "pgbouncer=true" in DATABASE_URL:
-        DATABASE_URL = DATABASE_URL.replace("pgbouncer=true", "")
-        # Clean up separators
-        DATABASE_URL = DATABASE_URL.replace("?&", "?").replace("&&", "&").rstrip("?").rstrip("&")
+    # CRITICAL: pg8000 does not support 'pgbouncer' or 'prepared_statements' in the connection string
+    for param in ["pgbouncer=true", "prepared_statements=false", "prepared_statements=true"]:
+        if param in DATABASE_URL:
+            DATABASE_URL = DATABASE_URL.replace(param, "")
+    
+    # Clean up separators (?, &)
+    DATABASE_URL = DATABASE_URL.replace("?&", "?").replace("&&", "&").rstrip("?").rstrip("&")
 
 # Detailed logging for debugging
 safe_url = DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else 'SQLite'
