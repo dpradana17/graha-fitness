@@ -7,7 +7,7 @@
   'use strict';
 
   // ---- API Config ----
-  const API_BASE = 'graha-fitness-production.up.railway.app/api';
+  const API_BASE = '/api';
   const SESSION_KEY = 'gf_session';
 
   // ---- Helpers ----
