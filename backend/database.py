@@ -11,8 +11,8 @@ import os
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./gymflow.db")
 
 # Fix for postgres:// prefixes and Supabase PgBouncer
-if DATABASE_URL and DATABASE_URL.startswith("postgres"):
-    # SQLAlchemy with pg8000 needs postgresql+pg8000://
+if DATABASE_URL and ("supabase" in DATABASE_URL or "postgres" in DATABASE_URL):
+    # Ensure we use pg8000
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+pg8000://", 1)
     elif DATABASE_URL.startswith("postgresql://"):
@@ -23,14 +23,23 @@ if DATABASE_URL and DATABASE_URL.startswith("postgres"):
         sep = "&" if "?" in DATABASE_URL else "?"
         DATABASE_URL += f"{sep}prepared_statements=false"
 
-print(f"📡 Connecting to database: {DATABASE_URL.split('@')[-1].split('?')[0] if '@' in DATABASE_URL else 'SQLite'}")
+# Detailed logging for debugging
+safe_url = DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else 'SQLite'
+print(f"📡 Connecting to database: {safe_url}")
 
-# PostgreSQL doesn't need "check_same_thread", SQLite does.
-# We use NullPool for PostgreSQL to work better with Supabase/PgBouncer
+# Connection arguments
+connect_args = {}
 if DATABASE_URL.startswith("postgresql"):
-    engine = create_engine(DATABASE_URL, poolclass=pool.NullPool)
+    engine = create_engine(
+        DATABASE_URL, 
+        poolclass=pool.NullPool,
+        connect_args={"ssl_context": True}  # pg8000 way to enable SSL
+    )
 else:
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+    engine = create_engine(
+        DATABASE_URL, 
+        connect_args={"check_same_thread": False}
+    )
 
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
