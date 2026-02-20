@@ -25,7 +25,7 @@ TOKEN_EXPIRE_HOURS = 24
 
 app = FastAPI(title="GymFlow API", version="1.0.0")
 
-# CORS — allow frontend (file:// and localhost)
+# CORS — allow frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -34,17 +34,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok", "timestamp": datetime.now().isoformat()}
+
 # ---- Static Files (Frontend) ----
-# Mount the parent directory to serve index.html, app.js, style.css
-# This is safe because FastAPI routes take precedence over mounted files
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 @app.get("/")
 async def read_index():
-    return FileResponse(os.path.join(BASE_DIR, "index.html"))
+    index_path = os.path.join(BASE_DIR, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"error": "index.html not found"}
 
-app.mount("/", StaticFiles(directory=BASE_DIR), name="static")
+# Specifically serve app.js and style.css to avoid mounting the whole root if possible
+# But for simplicity, we'll keep the mount but exclude backend folder to avoid recursion if any
+app.mount("/", StaticFiles(directory=BASE_DIR, html=True), name="static")
 
 
 # =====================

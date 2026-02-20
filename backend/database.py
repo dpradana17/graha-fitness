@@ -2,7 +2,7 @@
 GymFlow — Database Models & Setup (SQLAlchemy + SQLite)
 """
 
-from sqlalchemy import create_engine, Column, String, Integer, BigInteger, Date, Text, ForeignKey, DateTime
+from sqlalchemy import create_engine, Column, String, Integer, BigInteger, Date, Text, ForeignKey, DateTime, pool
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from datetime import datetime, date
 import uuid
@@ -10,15 +10,22 @@ import os
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./gymflow.db")
 
-# Fix for older postgres:// prefixes (SQLAlchemy requires postgresql://)
-if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+# Fix for older postgres:// prefixes and Supabase PgBouncer
+if DATABASE_URL and DATABASE_URL.startswith("postgres"):
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    
+    # Supabase Transaction Mode (6543) needs prepared_statements=false
+    if ":6543" in DATABASE_URL and "prepared_statements=" not in DATABASE_URL:
+        sep = "&" if "?" in DATABASE_URL else "?"
+        DATABASE_URL += f"{sep}prepared_statements=false"
 
-print(f"📡 Connecting to database: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else 'SQLite'}")
+print(f"📡 Connecting to database: {DATABASE_URL.split('@')[-1].split('?')[0] if '@' in DATABASE_URL else 'SQLite'}")
 
 # PostgreSQL doesn't need "check_same_thread", SQLite does.
+# We use NullPool for PostgreSQL to work better with Supabase/PgBouncer
 if DATABASE_URL.startswith("postgresql"):
-    engine = create_engine(DATABASE_URL)
+    engine = create_engine(DATABASE_URL, poolclass=pool.NullPool)
 else:
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
