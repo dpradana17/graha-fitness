@@ -10,10 +10,13 @@ import os
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./gymflow.db")
 
-# Fix for older postgres:// prefixes and Supabase PgBouncer
+# Fix for postgres:// prefixes and Supabase PgBouncer
 if DATABASE_URL and DATABASE_URL.startswith("postgres"):
+    # SQLAlchemy with pg8000 needs postgresql+pg8000://
     if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+pg8000://", 1)
+    elif DATABASE_URL.startswith("postgresql://"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
     
     # Supabase Transaction Mode (6543) needs prepared_statements=false
     if ":6543" in DATABASE_URL and "prepared_statements=" not in DATABASE_URL:
