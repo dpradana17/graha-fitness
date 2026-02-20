@@ -23,6 +23,12 @@ if DATABASE_URL and ("supabase" in DATABASE_URL or "postgres" in DATABASE_URL):
         sep = "&" if "?" in DATABASE_URL else "?"
         DATABASE_URL += f"{sep}prepared_statements=false"
 
+    # CRITICAL: pg8000 does not support the 'pgbouncer' parameter in the connection string
+    if "pgbouncer=true" in DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.replace("pgbouncer=true", "")
+        # Clean up separators
+        DATABASE_URL = DATABASE_URL.replace("?&", "?").replace("&&", "&").rstrip("?").rstrip("&")
+
 # Detailed logging for debugging
 safe_url = DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else 'SQLite'
 print(f"📡 Connecting to database: {safe_url}")
