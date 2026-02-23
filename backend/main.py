@@ -24,12 +24,17 @@ from jose import jwt, JWTError
 
 from .database import init_db, get_db, User, Member, Attendance, Transaction, StockItem, StockMovement, generate_uuid
 
-# ---- Config ----
-SECRET_KEY = "gymflow-secret-key-change-in-production"
-ALGORITHM = "HS256"
-TOKEN_EXPIRE_HOURS = 24
+import os
+# Detect production environment
+IS_PROD = os.getenv("RAILWAY_ENVIRONMENT") == "production" or os.getenv("ENV") == "production"
 
-app = FastAPI(title="Graha Fitness API", version="1.0.0")
+app = FastAPI(
+    title="Graha Fitness API",
+    version="1.0.0",
+    docs_url=None if IS_PROD else "/docs",
+    redoc_url=None if IS_PROD else "/redoc",
+    openapi_url=None if IS_PROD else "/openapi.json"
+)
 
 # CORS — allow frontend
 app.add_middleware(

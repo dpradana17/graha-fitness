@@ -871,6 +871,12 @@
       }
     };
 
+    // Hide login hints in production
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      const hint = document.querySelector('.login-hint');
+      if (hint) hint.style.display = 'none';
+    }
+
     // Check existing session
     const session = getSession();
     if (session && session.token) {
@@ -940,14 +946,18 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Format</label>
-          <div class="filter-group">
-            <label class="btn btn-secondary" style="flex:1;">
-               <input type="radio" name="expFinFormat" value="xlsx" checked style="margin-right:0.5rem"> Excel (.xlsx)
-            </label>
-            <label class="btn btn-secondary" style="flex:1;">
-               <input type="radio" name="expFinFormat" value="pdf" style="margin-right:0.5rem"> PDF (.pdf)
-            </label>
+          <label>Select Format</label>
+          <div class="format-picker">
+            <div class="format-option selected" data-value="xlsx">
+              <input type="radio" name="expFinFormat" value="xlsx" checked>
+              <span class="format-icon">📊</span>
+              <span class="format-label">Excel Spreadsheet</span>
+            </div>
+            <div class="format-option" data-value="pdf">
+              <input type="radio" name="expFinFormat" value="pdf">
+              <span class="format-icon">📄</span>
+              <span class="format-label">PDF Document</span>
+            </div>
           </div>
         </div>
         <div class="form-actions">
@@ -957,6 +967,15 @@
       </form>
     `;
     openModal('Export Finance Report', html);
+
+    const options = document.querySelectorAll('.format-option');
+    options.forEach(opt => {
+      opt.onclick = () => {
+        options.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        opt.querySelector('input').checked = true;
+      };
+    });
 
     document.getElementById('exportFinanceForm').onsubmit = async (e) => {
       e.preventDefault();
@@ -991,14 +1010,18 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Format</label>
-          <div class="filter-group">
-            <label class="btn btn-secondary" style="flex:1;">
-               <input type="radio" name="expAttFormat" value="xlsx" checked style="margin-right:0.5rem"> Excel (.xlsx)
-            </label>
-            <label class="btn btn-secondary" style="flex:1;">
-               <input type="radio" name="expAttFormat" value="pdf" style="margin-right:0.5rem"> PDF (.pdf)
-            </label>
+          <label>Select Format</label>
+          <div class="format-picker">
+            <div class="format-option selected" data-value="xlsx">
+              <input type="radio" name="expAttFormat" value="xlsx" checked>
+              <span class="format-icon">📊</span>
+              <span class="format-label">Excel Spreadsheet</span>
+            </div>
+            <div class="format-option" data-value="pdf">
+              <input type="radio" name="expAttFormat" value="pdf">
+              <span class="format-icon">📄</span>
+              <span class="format-label">PDF Document</span>
+            </div>
           </div>
         </div>
         <div class="form-actions">
@@ -1008,6 +1031,15 @@
       </form>
     `;
     openModal('Export Attendance Report', html);
+
+    const options = document.querySelectorAll('.format-option');
+    options.forEach(opt => {
+      opt.onclick = () => {
+        options.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        opt.querySelector('input').checked = true;
+      };
+    });
 
     document.getElementById('exportAttendanceForm').onsubmit = async (e) => {
       e.preventDefault();
