@@ -46,6 +46,12 @@
 
     <!-- ==================== APP SHELL ==================== -->
     <div class="app-shell" id="appShell" style="display:none;">
+        <div id="pageLoader" class="page-loader">
+            <div class="loader-content">
+                <div class="loader-spinner"></div>
+                <p>Loading data...</p>
+            </div>
+        </div>
 
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
@@ -193,6 +199,8 @@
                 <div class="card" style="margin-top:1.5rem;">
                     <div class="card-header">
                         <h2>Today's Attendance</h2>
+                        <button class="btn btn-secondary btn-sm" id="btnExportAttendance"><span>📋</span> Export
+                            Report</button>
                     </div>
                     <div class="card-body">
                         <ul class="attendance-log" id="attendanceLog">
@@ -242,7 +250,10 @@
                             <option value="expense">Expense</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" id="btnAddTransaction"><span>+</span> Add Transaction</button>
+                    <div class="toolbar-actions">
+                        <button class="btn btn-secondary" id="btnExportFinance"><span>📋</span> Export Report</button>
+                        <button class="btn btn-primary" id="btnAddTransaction"><span>+</span> Add Transaction</button>
+                    </div>
                 </div>
                 <div class="card">
                     <div class="table-wrapper">

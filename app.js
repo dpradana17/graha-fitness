@@ -132,6 +132,11 @@
     refreshPage(page);
   }
 
+  function setPageLoading(isLoading) {
+    const loader = document.getElementById('pageLoader');
+    if (loader) loader.classList.toggle('hidden', !isLoading);
+  }
+
   function refreshPage(page) {
     switch (page) {
       case 'dashboard': renderDashboard(); break;
@@ -161,6 +166,7 @@
   //        DASHBOARD
   // ============================
   async function renderDashboard() {
+    setPageLoading(true);
     try {
       const data = await apiGet('/dashboard');
       document.getElementById('dashTotalMembers').textContent = data.activeMembers;
@@ -179,6 +185,8 @@
         : data.expiring.map(m => `<li><span class="log-icon">⏰</span> ${m.name} <span class="badge badge-warning">Expires ${formatDate(m.endDate)}</span></li>`).join('');
     } catch (e) {
       console.error('Dashboard error:', e);
+    } finally {
+      setPageLoading(false);
     }
   }
 
@@ -186,6 +194,7 @@
   //     MEMBERS & ATTENDANCE
   // ============================
   async function renderMembers() {
+    setPageLoading(true);
     try {
       const searchTerm = (document.getElementById('memberSearch').value || '').trim();
       const members = await apiGet('/members' + (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''));
@@ -372,6 +381,7 @@
   //     MONEY MANAGEMENT
   // ============================
   async function renderFinance() {
+    setPageLoading(true);
     try {
       const typeFilter = document.getElementById('finTypeFilter').value;
       const monthFilter = document.getElementById('finMonthFilter').value;
@@ -433,6 +443,8 @@
       }
     } catch (e) {
       console.error('Finance error:', e);
+    } finally {
+      setPageLoading(false);
     }
   }
 
@@ -544,6 +556,7 @@
   //       FOOD STOCK
   // ============================
   async function renderStock() {
+    setPageLoading(true);
     try {
       const searchTerm = (document.getElementById('stockSearch').value || '').trim();
       const items = await apiGet('/stock' + (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''));
@@ -580,6 +593,8 @@
       await renderStockMovements();
     } catch (e) {
       console.error('Stock error:', e);
+    } finally {
+      setPageLoading(false);
     }
   }
 
@@ -902,6 +917,134 @@
     // Finance filters
     document.getElementById('finTypeFilter').addEventListener('change', () => renderFinance());
     document.getElementById('finMonthFilter').addEventListener('change', () => renderFinance());
+
+    // Export Buttons
+    document.getElementById('btnExportFinance').addEventListener('click', () => showExportFinanceModal());
+    document.getElementById('btnExportAttendance').addEventListener('click', () => showExportAttendanceModal());
+  }
+
+  // ============================
+  //        EXPORT MODALS
+  // ============================
+  function showExportFinanceModal() {
+    const html = `
+      <form id="exportFinanceForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" id="expFinStart" value="${today().substring(0, 8)}01">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="date" id="expFinEnd" value="${today()}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Format</label>
+          <div class="filter-group">
+            <label class="btn btn-secondary" style="flex:1;">
+               <input type="radio" name="expFinFormat" value="xlsx" checked style="margin-right:0.5rem"> Excel (.xlsx)
+            </label>
+            <label class="btn btn-secondary" style="flex:1;">
+               <input type="radio" name="expFinFormat" value="pdf" style="margin-right:0.5rem"> PDF (.pdf)
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Download Report</button>
+        </div>
+      </form>
+    `;
+    openModal('Export Finance Report', html);
+
+    document.getElementById('exportFinanceForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const start = document.getElementById('expFinStart').value;
+      const end = document.getElementById('expFinEnd').value;
+      const format = e.target.expFinFormat.value;
+
+      setLoading(btn, true);
+      try {
+        await downloadFile(`/reports/finance/export?format=${format}&start_date=${start}&end_date=${end}`, `finance_report_${today()}.${format}`);
+        closeModal();
+      } catch (err) {
+        alert('Export failed: ' + err.message);
+      } finally {
+        setLoading(btn, false);
+      }
+    };
+  }
+
+  function showExportAttendanceModal() {
+    const html = `
+      <form id="exportAttendanceForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" id="expAttStart" value="${today()}">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="date" id="expAttEnd" value="${today()}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Format</label>
+          <div class="filter-group">
+            <label class="btn btn-secondary" style="flex:1;">
+               <input type="radio" name="expAttFormat" value="xlsx" checked style="margin-right:0.5rem"> Excel (.xlsx)
+            </label>
+            <label class="btn btn-secondary" style="flex:1;">
+               <input type="radio" name="expAttFormat" value="pdf" style="margin-right:0.5rem"> PDF (.pdf)
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Download Report</button>
+        </div>
+      </form>
+    `;
+    openModal('Export Attendance Report', html);
+
+    document.getElementById('exportAttendanceForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const start = document.getElementById('expAttStart').value;
+      const end = document.getElementById('expAttEnd').value;
+      const format = e.target.expAttFormat.value;
+
+      setLoading(btn, true);
+      try {
+        await downloadFile(`/reports/attendance/export?format=${format}&start_date=${start}&end_date=${end}`, `attendance_report_${today()}.${format}`);
+        closeModal();
+      } catch (err) {
+        alert('Export failed: ' + err.message);
+      } finally {
+        setLoading(btn, false);
+      }
+    };
+  }
+
+  async function downloadFile(path, filename) {
+    const token = getToken();
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${API_BASE}${path}`, { headers });
+    if (!res.ok) throw new Error('Failed to download file');
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
   // Expose API

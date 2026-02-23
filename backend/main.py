@@ -9,7 +9,13 @@ Docs: http://localhost:8000/docs
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
+import pandas as pd
+import io
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -489,6 +495,173 @@ def list_stock_movements(user: User = Depends(get_current_user), db: Session = D
             "type": mv.type, "quantity": mv.quantity, "date": mv.date, "note": mv.note or ""
         })
     return result
+
+
+# =====================
+#     REPORTS
+# =====================
+
+@app.get("/api/reports/finance/export")
+def export_finance_report(format: str = "xlsx", start_date: Optional[str] = None, end_date: Optional[str] = None,
+                          user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    query = db.query(Transaction)
+    if start_date:
+        query = query.filter(Transaction.date >= start_date)
+    if end_date:
+        query = query.filter(Transaction.date <= end_date)
+    
+    txs = query.order_by(Transaction.date.desc()).all()
+    
+    data = []
+    for t in txs:
+        member_name = "—"
+        if t.member_id:
+            m = db.query(Member).filter(Member.id == t.member_id).first()
+            member_name = m.name if m else "Unknown"
+        
+        data.append({
+            "Date": t.date,
+            "Type": t.type.capitalize(),
+            "Category": t.category,
+            "Amount": t.amount,
+            "Member": member_name,
+            "Note": t.note or ""
+        })
+    
+    df = pd.DataFrame(data)
+    
+    if format == "xlsx":
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Finance Report')
+        output.seek(0)
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename=finance_report_{date.today()}.xlsx"}
+        )
+    
+    elif format == "pdf":
+        output = io.BytesIO()
+        doc = SimpleDocTemplate(output, pagesize=landscape(letter))
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        elements.append(Paragraph("Graha Fitness - Finance Report", styles['Title']))
+        elements.append(Spacer(1, 12))
+        
+        if start_date or end_date:
+            filter_text = f"Period: {start_date or 'Start'} to {end_date or 'End'}"
+            elements.append(Paragraph(filter_text, styles['Normal']))
+            elements.append(Spacer(1, 12))
+        
+        if not data:
+            elements.append(Paragraph("No transactions found for the selected period.", styles['Normal']))
+        else:
+            # Table Header
+            table_data = [["Date", "Type", "Category", "Amount", "Member", "Note"]]
+            for d in data:
+                table_data.append([d["Date"], d["Type"], d["Category"], f"{d['Amount']:,}", d["Member"], d["Note"]])
+            
+            t = Table(table_data, repeatRows=1)
+            t.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            elements.append(t)
+        
+        doc.build(elements)
+        output.seek(0)
+        return StreamingResponse(
+            output,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename=finance_report_{date.today()}.pdf"}
+        )
+    
+    raise HTTPException(status_code=400, detail="Invalid format. Use 'xlsx' or 'pdf'.")
+
+
+@app.get("/api/reports/attendance/export")
+def export_attendance_report(format: str = "xlsx", start_date: Optional[str] = None, end_date: Optional[str] = None,
+                             user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    query = db.query(Attendance)
+    if start_date:
+        query = query.filter(Attendance.date >= start_date)
+    if end_date:
+        query = query.filter(Attendance.date <= end_date)
+    
+    records = query.order_by(Attendance.date.desc(), Attendance.time.desc()).all()
+    
+    data = []
+    for r in records:
+        m = db.query(Member).filter(Member.id == r.member_id).first()
+        data.append({
+            "Date": r.date,
+            "Time": r.time,
+            "Member Name": m.name if m else "Unknown",
+            "Type": r.type.capitalize()
+        })
+    
+    df = pd.DataFrame(data)
+    
+    if format == "xlsx":
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Attendance Report')
+        output.seek(0)
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename=attendance_report_{date.today()}.xlsx"}
+        )
+    
+    elif format == "pdf":
+        output = io.BytesIO()
+        doc = SimpleDocTemplate(output, pagesize=letter)
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        elements.append(Paragraph("Graha Fitness - Attendance Report", styles['Title']))
+        elements.append(Spacer(1, 12))
+        
+        if start_date or end_date:
+            filter_text = f"Period: {start_date or 'Start'} to {end_date or 'End'}"
+            elements.append(Paragraph(filter_text, styles['Normal']))
+            elements.append(Spacer(1, 12))
+        
+        if not data:
+            elements.append(Paragraph("No attendance records found for the selected period.", styles['Normal']))
+        else:
+            table_data = [["Date", "Time", "Member Name", "Type"]]
+            for d in data:
+                table_data.append([d["Date"], d["Time"], d["Member Name"], d["Type"]])
+            
+            t = Table(table_data, repeatRows=1)
+            t.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            elements.append(t)
+        
+        doc.build(elements)
+        output.seek(0)
+        return StreamingResponse(
+            output,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename=attendance_report_{date.today()}.pdf"}
+        )
+    
+    raise HTTPException(status_code=400, detail="Invalid format. Use 'xlsx' or 'pdf'.")
 
 
 # =====================
