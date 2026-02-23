@@ -1310,3 +1310,20 @@ body::before {
 .format-option.selected .format-label {
   color: var(--accent-blue);
 }
+
+.btn-icon-danger {
+  background: transparent;
+  border: none;
+  color: var(--accent-coral);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.2s;
+  margin-left: 0.5rem;
+}
+
+.btn-icon-danger:hover {
+  background: var(--accent-coral-glow);
+}

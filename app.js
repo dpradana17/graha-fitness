@@ -109,6 +109,10 @@
     document.getElementById('userName').textContent = u.displayName;
     document.getElementById('userRole').textContent = u.role === 'superadmin' ? 'Super Admin' : 'Admin';
     document.getElementById('userAvatar').textContent = u.displayName.charAt(0).toUpperCase();
+
+    // Show/hide bulk attendance clear
+    const clearBtn = document.getElementById('btnClearAttendance');
+    if (clearBtn) clearBtn.style.display = isSuperAdmin() ? 'block' : 'none';
   }
 
   // ---- Router ----
@@ -241,15 +245,77 @@
   async function renderAttendanceLog() {
     try {
       const records = await apiGet('/attendance');
+      const isSAdmin = isSuperAdmin();
       const logEl = document.getElementById('attendanceLog');
+
       logEl.innerHTML = records.length === 0
         ? '<li class="activity-empty">No check-ins today</li>'
-        : records.map(a =>
-          `<li><span class="log-icon">✅</span> ${a.memberName} — ${a.type} <span class="log-time">${a.time || ''}</span></li>`
-        ).join('');
+        : records.map(a => {
+          const deleteBtn = isSAdmin
+            ? `<button class="btn-icon-danger" onclick="app.deleteAttendance('${a.id}')" title="Delete">✕</button>`
+            : '';
+          return `<li>
+              <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                <span><span class="log-icon">✅</span> ${a.memberName} — ${a.type}</span>
+                <span class="log-time">${a.time || ''} ${deleteBtn}</span>
+              </div>
+            </li>`;
+        }).join('');
     } catch (e) {
       console.error('Attendance error:', e);
     }
+  }
+
+  async function deleteAttendance(id) {
+    if (!confirm('Delete this check-in record?')) return;
+    try {
+      await apiDelete(`/attendance/${id}`);
+      renderAttendanceLog();
+    } catch (e) {
+      alert('Error deleting record: ' + e.message);
+    }
+  }
+
+  function showClearAttendanceModal() {
+    const html = `
+      <form id="clearAttForm">
+        <p style="margin-bottom:1rem; color:var(--text-secondary);">This will permanently delete attendance records within the selected range.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" id="clrAttStart" value="${today()}">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="date" id="clrAttEnd" value="${today()}">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-danger">Delete Records</button>
+        </div>
+      </form>
+    `;
+    openModal('Clear Attendance Logs', html);
+
+    document.getElementById('clearAttForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const start = document.getElementById('clrAttStart').value;
+      const end = document.getElementById('clrAttEnd').value;
+      if (!confirm(`Are you sure you want to delete ALL attendance records from ${start} to ${end}?`)) return;
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      setLoading(btn, true);
+      try {
+        await apiDelete(`/attendance?start_date=${start}&end_date=${end}`);
+        closeModal();
+        renderAttendanceLog();
+      } catch (err) {
+        alert('Clear failed: ' + err.message);
+      } finally {
+        setLoading(btn, false);
+      }
+    };
   }
 
   // Cache members list for forms
@@ -927,6 +993,13 @@
     // Export Buttons
     document.getElementById('btnExportFinance').addEventListener('click', () => showExportFinanceModal());
     document.getElementById('btnExportAttendance').addEventListener('click', () => showExportAttendanceModal());
+
+    // Attendance Clear
+    const clrAttBtn = document.getElementById('btnClearAttendance');
+    if (clrAttBtn) clrAttBtn.addEventListener('click', () => showClearAttendanceModal());
+  }
+
+  async function export_finance_report(format = 'xlsx', start = '', end = '') {
   }
 
   // ============================
@@ -1085,6 +1158,7 @@
     editTransaction, deleteTransaction,
     editStockItem, deleteStockItem,
     showMemberQR, shareMemberQR, downloadQR,
+    deleteAttendance,
     closeModal,
   };
 

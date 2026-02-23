@@ -333,8 +333,6 @@ def checkin_member(member_id: str, user: User = Depends(get_current_user), db: S
     db.add(record)
     db.commit()
     return {"status": "checked_in", "memberName": member.name, "time": record.time}
-
-
 @app.get("/api/attendance")
 def list_attendance(target_date: Optional[str] = None, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     d = target_date or date.today().isoformat()
@@ -347,6 +345,28 @@ def list_attendance(target_date: Optional[str] = None, user: User = Depends(get_
             "date": a.date, "time": a.time, "type": a.type
         })
     return result
+@app.delete("/api/attendance/{attendance_id}")
+def delete_attendance(attendance_id: str, user: User = Depends(require_superadmin), db: Session = Depends(get_db)):
+    record = db.query(Attendance).filter(Attendance.id == attendance_id).first()
+    if not record:
+        raise HTTPException(status_code=404, detail="Record not found")
+    db.delete(record)
+    db.commit()
+    return {"status": "deleted"}
+
+
+@app.delete("/api/attendance")
+def delete_attendance_bulk(start_date: Optional[str] = None, end_date: Optional[str] = None,
+                           user: User = Depends(require_superadmin), db: Session = Depends(get_db)):
+    query = db.query(Attendance)
+    if start_date:
+        query = query.filter(Attendance.date >= start_date)
+    if end_date:
+        query = query.filter(Attendance.date <= end_date)
+    
+    count = query.delete(synchronize_session=False)
+    db.commit()
+    return {"status": "deleted", "count": count}
 
 
 # =====================

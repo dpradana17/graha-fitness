@@ -199,8 +199,12 @@
                 <div class="card" style="margin-top:1.5rem;">
                     <div class="card-header">
                         <h2>Today's Attendance</h2>
-                        <button class="btn btn-secondary btn-sm" id="btnExportAttendance"><span>📋</span> Export
-                            Report</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary btn-sm" id="btnExportAttendance"><span>📋</span>
+                                Report</button>
+                            <button class="btn btn-danger btn-sm" id="btnClearAttendance"
+                                style="display:none;"><span>🗑️</span> Clear Logs</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <ul class="attendance-log" id="attendanceLog">
