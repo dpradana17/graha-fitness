@@ -1327,3 +1327,54 @@ body::before {
 .btn-icon-danger:hover {
   background: var(--accent-coral-glow);
 }
+
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all var(--transition-base);
+}
+
+.sync-status.online {
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.sync-status.offline {
+  color: var(--accent-coral);
+  border-color: rgba(239, 68, 68, 0.2);
+  animation: pulse-border 2s infinite;
+}
+
+.sync-status.syncing {
+  color: var(--accent-blue);
+  border-color: var(--accent-blue-glow);
+}
+
+.sync-status.syncing .sync-icon {
+  animation: btnSpinner 1s linear infinite;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+#btnSyncNow {
+  animation: loaderFadeIn 0.3s ease;
+}

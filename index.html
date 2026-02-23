@@ -243,6 +243,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="top-bar-right">
+                    <div id="syncIndicator" class="sync-status online" title="Online">
+                        <span class="sync-icon">●</span>
+                        <span class="sync-text">Online</span>
+                    </div>
+                    <button class="btn btn-primary btn-sm hidden" id="btnSyncNow">Sync Now</button>
+                    <div class="user-profile">
+                        <select id="finMonthFilter" class="select-input">
+                            <option value="">All Months</option>
+                        </select>
+                        <select id="finTypeFilter" class="select-input">
+                            <option value="">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="toolbar">
                     <div class="filter-group">
                         <select id="finMonthFilter" class="select-input">

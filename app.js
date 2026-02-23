@@ -39,32 +39,153 @@
     return s ? s.token : '';
   }
 
-  async function api(endpoint, options = {}) {
+  async function api(endpoint, options = {}, skipQueue = false) {
     const headers = { 'Content-Type': 'application/json' };
     const token = getToken();
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
-    if (res.status === 401) {
-      logout();
-      throw new Error('Session expired');
+    try {
+      const res = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers,
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (res.status === 401) {
+        logout();
+        throw new Error('Session expired');
+      }
+      if (res.status === 403) {
+        alert('Access denied: insufficient permissions');
+        throw new Error('Forbidden');
+      }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Request failed' }));
+        throw new Error(err.detail || 'API error');
+      }
+      return res.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+
+      const isTimeout = err.name === 'AbortError';
+      if (isTimeout) {
+        alert('Connection Timeout: The server is taking too long to respond. Please check your internet connection and try again.');
+      }
+
+      // Handle network errors/timeouts for mutation requests (POST/PUT/DELETE)
+      const isMutation = ['POST', 'PUT', 'DELETE'].includes(options.method);
+      if (isTimeout || !navigator.onLine || err.message === 'Failed to fetch') {
+        if (isMutation && !skipQueue) {
+          addToOfflineQueue(endpoint, options);
+          return { status: 'queued', message: 'Request timed out/offline: Data will sync when stable.' };
+        }
+      }
+      throw err;
     }
-    if (res.status === 403) {
-      alert('Access denied: insufficient permissions');
-      throw new Error('Forbidden');
-    }
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: 'Request failed' }));
-      throw new Error(err.detail || 'API error');
-    }
-    return res.json();
   }
 
   async function apiGet(path) { return api(path); }
   async function apiPost(path, data) { return api(path, { method: 'POST', body: JSON.stringify(data) }); }
   async function apiPut(path, data) { return api(path, { method: 'PUT', body: JSON.stringify(data) }); }
   async function apiDelete(path) { return api(path, { method: 'DELETE' }); }
+
+  // ---- Offline Queue ----
+  const OFFLINE_QUEUE_KEY = 'gf_offline_queue';
+
+  function getOfflineQueue() {
+    try { return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveOfflineQueue(queue) {
+    localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+    updateSyncIndicator();
+  }
+
+  function addToOfflineQueue(endpoint, options) {
+    const queue = getOfflineQueue();
+    // Don't queue duplicate identical requests (e.g. double check-in clicks)
+    const isDup = queue.some(item => item.endpoint === endpoint && JSON.stringify(item.options) === JSON.stringify(options));
+    if (isDup) return;
+
+    queue.push({
+      id: Date.now(),
+      endpoint,
+      options,
+      timestamp: new Date().toISOString()
+    });
+    saveOfflineQueue(queue);
+  }
+
+  async function syncOfflineData() {
+    const queue = getOfflineQueue();
+    if (queue.length === 0 || !navigator.onLine) return;
+
+    const indicator = document.getElementById('syncIndicator');
+    const syncBtn = document.getElementById('btnSyncNow');
+
+    indicator.classList.add('syncing');
+    indicator.querySelector('.sync-text').textContent = 'Syncing...';
+    if (syncBtn) syncBtn.disabled = true;
+
+    const remaining = [];
+    let successCount = 0;
+
+    for (const item of queue) {
+      try {
+        await api(item.endpoint, item.options, true); // true = skipQueue
+        successCount++;
+      } catch (err) {
+        console.error('Sync failed for item:', item, err);
+        remaining.push(item);
+      }
+    }
+
+    saveOfflineQueue(remaining);
+
+    if (successCount > 0) {
+      // Refresh current page to show synced data
+      const activePage = document.querySelector('.nav-item.active');
+      if (activePage) navigate(activePage.dataset.page);
+    }
+
+    indicator.classList.remove('syncing');
+    updateSyncIndicator();
+  }
+
+  function updateSyncIndicator() {
+    const indicator = document.getElementById('syncIndicator');
+    const syncBtn = document.getElementById('btnSyncNow');
+    const queue = getOfflineQueue();
+    const isOnline = navigator.onLine;
+
+    if (!indicator) return;
+
+    if (isOnline) {
+      indicator.classList.remove('offline');
+      indicator.classList.add('online');
+      indicator.querySelector('.sync-text').textContent = queue.length > 0 ? `${queue.length} Pending` : 'Online';
+      if (syncBtn) {
+        syncBtn.classList.toggle('hidden', queue.length === 0);
+        syncBtn.disabled = false;
+      }
+    } else {
+      indicator.classList.remove('online');
+      indicator.classList.add('offline');
+      indicator.querySelector('.sync-text').textContent = 'Offline';
+      if (syncBtn) syncBtn.classList.add('hidden');
+    }
+  }
+
+  window.addEventListener('online', () => {
+    updateSyncIndicator();
+    syncOfflineData();
+  });
+  window.addEventListener('offline', updateSyncIndicator);
 
   // ============================
   //     AUTH MODULE
@@ -997,6 +1118,10 @@
     // Attendance Clear
     const clrAttBtn = document.getElementById('btnClearAttendance');
     if (clrAttBtn) clrAttBtn.addEventListener('click', () => showClearAttendanceModal());
+
+    // Sync Button
+    const syncBtn = document.getElementById('btnSyncNow');
+    if (syncBtn) syncBtn.addEventListener('click', () => syncOfflineData());
   }
 
   async function export_finance_report(format = 'xlsx', start = '', end = '') {
@@ -1162,5 +1287,17 @@
     closeModal,
   };
 
-  document.addEventListener('DOMContentLoaded', init);
+  // Registration & Init
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('[SW] Registered', reg.scope))
+        .catch(err => console.log('[SW] Failed', err));
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    init();
+    updateSyncIndicator();
+  });
 })();
