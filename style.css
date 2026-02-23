@@ -1378,3 +1378,26 @@ body::before {
 #btnSyncNow {
   animation: loaderFadeIn 0.3s ease;
 }
+
+/* --- Top Navbar --- */
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--bg-glass);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  margin: -2rem -2rem 2rem -2rem;
+}
+
+.top-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+```

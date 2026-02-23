@@ -101,6 +101,16 @@
 
         <!-- Main Content -->
         <main class="main-content" id="mainContent">
+            <header class="top-navbar">
+                <div class="top-navbar-left"></div>
+                <div class="top-navbar-right">
+                    <div id="syncIndicator" class="sync-status online" title="Online">
+                        <span class="sync-icon">●</span>
+                        <span class="sync-text">Online</span>
+                    </div>
+                    <button class="btn btn-primary btn-sm hidden" id="btnSyncNow">Sync Now</button>
+                </div>
+            </header>
 
             <!-- ==================== DASHBOARD ==================== -->
             <section class="page" id="page-dashboard">
@@ -217,10 +227,10 @@
             <!-- ==================== FINANCE ==================== -->
             <section class="page hidden" id="page-finance">
                 <div class="page-header">
-                    <h1>Money Management</h1>
-                    <p class="page-subtitle">Track income, expenses, and financial health</p>
+                    <h1>Financial Records</h1>
+                    <p class="page-subtitle">Track income, expenses, and overall profitability</p>
                 </div>
-                <div class="stats-grid stats-grid-3">
+                <div class="stats-grid">
                     <div class="stat-card stat-income">
                         <div class="stat-icon">📈</div>
                         <div class="stat-info">
@@ -232,7 +242,7 @@
                         <div class="stat-icon">📉</div>
                         <div class="stat-info">
                             <span class="stat-value" id="finExpense">Rp 0</span>
-                            <span class="stat-label">Monthly Expenses</span>
+                            <span class="stat-label">Monthly Expense</span>
                         </div>
                     </div>
                     <div class="stat-card stat-profit">
@@ -241,23 +251,6 @@
                             <span class="stat-value" id="finProfit">Rp 0</span>
                             <span class="stat-label">Net Profit</span>
                         </div>
-                    </div>
-                </div>
-                <div class="top-bar-right">
-                    <div id="syncIndicator" class="sync-status online" title="Online">
-                        <span class="sync-icon">●</span>
-                        <span class="sync-text">Online</span>
-                    </div>
-                    <button class="btn btn-primary btn-sm hidden" id="btnSyncNow">Sync Now</button>
-                    <div class="user-profile">
-                        <select id="finMonthFilter" class="select-input">
-                            <option value="">All Months</option>
-                        </select>
-                        <select id="finTypeFilter" class="select-input">
-                            <option value="">All Types</option>
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
-                        </select>
                     </div>
                 </div>
                 <div class="toolbar">
