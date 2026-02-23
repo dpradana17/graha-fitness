@@ -360,6 +360,8 @@
       await renderAttendanceLog();
     } catch (e) {
       console.error('Members error:', e);
+    } finally {
+      setPageLoading(false);
     }
   }
 
