@@ -93,6 +93,7 @@ class TransactionCreate(BaseModel):
     category: str
     amount: int
     member_id: Optional[str] = None
+    item_id: Optional[str] = None
     note: Optional[str] = ""
 
 class TransactionUpdate(BaseModel):
@@ -101,6 +102,7 @@ class TransactionUpdate(BaseModel):
     category: Optional[str] = None
     amount: Optional[int] = None
     member_id: Optional[str] = None
+    item_id: Optional[str] = None
     note: Optional[str] = None
 
 class StockItemCreate(BaseModel):
@@ -317,22 +319,39 @@ def delete_member(member_id: str, user: User = Depends(get_current_user), db: Se
 
 @app.post("/api/members/{member_id}/checkin")
 def checkin_member(member_id: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    # Try by ID first, then by Phone
     member = db.query(Member).filter(Member.id == member_id).first()
     if not member:
+        member = db.query(Member).filter(Member.phone == member_id).first()
+    
+    if not member:
         raise HTTPException(status_code=404, detail="Member not found")
+        
     if member.status == "expired" or member.end_date < date.today().isoformat():
-        raise HTTPException(status_code=400, detail="Membership expired")
+        return {
+            "status": "failed",
+            "message": "Membership expired",
+            "memberName": member.name,
+            "memberStatus": "expired",
+            "endDate": member.end_date
+        }
 
     now = datetime.now()
     record = Attendance(
-        id=generate_uuid(), member_id=member_id,
+        id=generate_uuid(), member_id=member.id,
         date=date.today().isoformat(),
         time=now.strftime("%I:%M %p"),
         type="check-in"
     )
     db.add(record)
     db.commit()
-    return {"status": "checked_in", "memberName": member.name, "time": record.time}
+    return {
+        "status": "checked_in",
+        "memberName": member.name,
+        "memberStatus": member.status,
+        "endDate": member.end_date,
+        "time": record.time
+    }
 @app.get("/api/attendance")
 def list_attendance(target_date: Optional[str] = None, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     d = target_date or date.today().isoformat()
@@ -389,9 +408,16 @@ def list_transactions(type_filter: Optional[str] = None, month: Optional[str] = 
         if t.member_id:
             m = db.query(Member).filter(Member.id == t.member_id).first()
             member_name = m.name if m else None
+        
+        item_name = None
+        if t.item_id:
+            i = db.query(StockItem).filter(StockItem.id == t.item_id).first()
+            item_name = i.name if i else None
+
         result.append({
             "id": t.id, "type": t.type, "date": t.date, "category": t.category,
             "amount": t.amount, "memberId": t.member_id, "memberName": member_name,
+            "itemId": t.item_id, "itemName": item_name,
             "note": t.note or "",
         })
     return result
@@ -412,7 +438,8 @@ def transaction_summary(user: User = Depends(get_current_user), db: Session = De
 def create_transaction(data: TransactionCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     tx = Transaction(
         id=generate_uuid(), type=data.type, date=data.date, category=data.category,
-        amount=data.amount, member_id=data.member_id or None, note=data.note or ""
+        amount=data.amount, member_id=data.member_id or None, 
+        item_id=data.item_id or None, note=data.note or ""
     )
     db.add(tx)
     db.commit()

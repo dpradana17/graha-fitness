@@ -1199,50 +1199,48 @@ body::before {
 
 /* --- Page Loader --- */
 .page-loader {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  height: 3px;
+  background: var(--bg-glass);
   z-index: 1000;
-  background: rgba(10, 14, 26, 0.4);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity var(--transition-base), visibility var(--transition-base);
-  opacity: 1;
-  visibility: visible;
+  overflow: hidden;
+  transition: opacity var(--transition-base), left var(--transition-slow);
+}
+
+.sidebar.collapsed~.main-content .page-loader,
+.sidebar.collapsed~.page-loader {
+  left: var(--sidebar-collapsed);
 }
 
 .page-loader.hidden {
   opacity: 0;
-  visibility: hidden;
   pointer-events: none;
 }
 
-.loader-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  animation: loaderFadeIn 0.5s ease-out;
+.loader-spinner {
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+  animation: loadingBar 1.5s infinite linear;
 }
 
-.loader-spinner {
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(59, 130, 246, 0.1);
-  border-top-color: var(--accent-blue);
-  border-radius: 50%;
-  animation: btnSpinner 0.8s linear infinite;
-  box-shadow: 0 0 20px var(--accent-blue-glow);
+@keyframes loadingBar {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(400%);
+  }
 }
 
 .loader-content p {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  display: none;
 }
+
 
 @keyframes loaderFadeIn {
   from {
@@ -1400,4 +1398,49 @@ body::before {
   gap: 1rem;
 }
 
-```
+
+/* --- Language Switcher --- */
+.lang-switcher {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.lang-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.lang-btn:hover {
+  border-color: var(--accent-blue);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.lang-btn.active {
+  background: var(--accent-blue);
+  color: white;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 15px var(--accent-blue-glow);
+}
+
+.sidebar.collapsed .lang-switcher {
+  flex-direction: column;
+}
+
+.sidebar.collapsed .lang-btn span {
+  display: none;
+}

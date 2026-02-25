@@ -13,6 +13,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 
 <body>
@@ -22,20 +23,22 @@
         <div class="login-card">
             <div class="login-header">
                 <span class="login-logo">💪</span>
-                <h1>Graha Fitness</h1>
-                <p>Sign in to your account</p>
+                <h1 data-i18n="welcome">Graha Fitness</h1>
+                <p data-i18n="sign_in_hint">Sign in to your account</p>
             </div>
             <form id="loginForm">
                 <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="loginUser" placeholder="Enter username" required autocomplete="off">
+                    <label data-i18n="username">Username</label>
+                    <input type="text" id="loginUser" placeholder="Enter username" data-i18n="placeholder_user" required
+                        autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPass" placeholder="Enter password" required>
+                    <label data-i18n="password">Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter password" data-i18n="placeholder_pass"
+                        required>
                 </div>
                 <div class="login-error" id="loginError" style="display:none;"></div>
-                <button type="submit" class="btn btn-primary btn-login">Sign In</button>
+                <button type="submit" class="btn btn-primary btn-login" data-i18n="sign_in">Sign In</button>
             </form>
             <div class="login-hint">
                 <p>Demo accounts:</p>
@@ -49,7 +52,7 @@
         <div id="pageLoader" class="page-loader">
             <div class="loader-content">
                 <div class="loader-spinner"></div>
-                <p>Loading data...</p>
+                <p data-i18n="loading">Loading data...</p>
             </div>
         </div>
 
@@ -67,23 +70,23 @@
             <nav class="sidebar-nav">
                 <a href="#dashboard" class="nav-item active" data-page="dashboard">
                     <span class="nav-icon">📊</span>
-                    <span class="nav-label">Dashboard</span>
+                    <span class="nav-label" data-i18n="dashboard">Dashboard</span>
                 </a>
                 <a href="#members" class="nav-item" data-page="members">
                     <span class="nav-icon">👥</span>
-                    <span class="nav-label">Members</span>
+                    <span class="nav-label" data-i18n="members">Members</span>
                 </a>
                 <a href="#finance" class="nav-item" data-page="finance">
                     <span class="nav-icon">💰</span>
-                    <span class="nav-label">Finance</span>
+                    <span class="nav-label" data-i18n="finance">Finance</span>
                 </a>
                 <a href="#stock" class="nav-item" data-page="stock">
                     <span class="nav-icon">🥤</span>
-                    <span class="nav-label">Food Stock</span>
+                    <span class="nav-label" data-i18n="stock">Food Stock</span>
                 </a>
                 <a href="#scan" class="nav-item" data-page="scan">
                     <span class="nav-icon">📷</span>
-                    <span class="nav-label">Scan Check-in</span>
+                    <span class="nav-label" data-i18n="scan">Scan Check-in</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -94,7 +97,11 @@
                         <span class="user-role" id="userRole">admin</span>
                     </div>
                 </div>
-                <button class="btn btn-sm btn-logout" id="btnLogout">Logout</button>
+                <div class="lang-switcher">
+                    <button class="lang-btn" data-lang="id" onclick="app.setLanguage('id')">🇮🇩 ID</button>
+                    <button class="lang-btn" data-lang="en" onclick="app.setLanguage('en')">🇺🇸 EN</button>
+                </div>
+                <button class="btn btn-sm btn-logout" id="btnLogout" data-i18n="logout">Logout</button>
                 <div class="current-date" id="currentDate"></div>
             </div>
         </aside>
@@ -106,52 +113,52 @@
                 <div class="top-navbar-right">
                     <div id="syncIndicator" class="sync-status online" title="Online">
                         <span class="sync-icon">●</span>
-                        <span class="sync-text">Online</span>
+                        <span class="sync-text" data-i18n="online">Online</span>
                     </div>
-                    <button class="btn btn-primary btn-sm hidden" id="btnSyncNow">Sync Now</button>
+                    <button class="btn btn-primary btn-sm hidden" id="btnSyncNow" data-i18n="sync_now">Sync Now</button>
                 </div>
             </header>
 
             <!-- ==================== DASHBOARD ==================== -->
             <section class="page" id="page-dashboard">
                 <div class="page-header">
-                    <h1>Dashboard</h1>
-                    <p class="page-subtitle">Overview of your gym operations</p>
+                    <h1 data-i18n="dashboard">Dashboard</h1>
+                    <p class="page-subtitle" data-i18n="dash_subtitle">Overview of your gym operations</p>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card stat-members">
                         <div class="stat-icon">👥</div>
                         <div class="stat-info">
                             <span class="stat-value" id="dashTotalMembers">0</span>
-                            <span class="stat-label">Active Members</span>
+                            <span class="stat-label" data-i18n="active_members">Active Members</span>
                         </div>
                     </div>
                     <div class="stat-card stat-revenue">
                         <div class="stat-icon">💰</div>
                         <div class="stat-info">
                             <span class="stat-value" id="dashMonthRevenue">Rp 0</span>
-                            <span class="stat-label">Monthly Revenue</span>
+                            <span class="stat-label" data-i18n="monthly_income">Monthly Revenue</span>
                         </div>
                     </div>
                     <div class="stat-card stat-checkins">
                         <div class="stat-icon">✅</div>
                         <div class="stat-info">
                             <span class="stat-value" id="dashTodayCheckins">0</span>
-                            <span class="stat-label">Today's Check-ins</span>
+                            <span class="stat-label" data-i18n="today_checkins">Today's Check-ins</span>
                         </div>
                     </div>
                     <div class="stat-card stat-alerts">
                         <div class="stat-icon">⚠️</div>
                         <div class="stat-info">
                             <span class="stat-value" id="dashLowStock">0</span>
-                            <span class="stat-label">Low Stock Alerts</span>
+                            <span class="stat-label" data-i18n="low_stock">Low Stock Alerts</span>
                         </div>
                     </div>
                 </div>
                 <div class="dashboard-grid">
                     <div class="card recent-activity">
                         <div class="card-header">
-                            <h2>Recent Activity</h2>
+                            <h2 data-i18n="recent_activity">Recent Activity</h2>
                         </div>
                         <div class="card-body">
                             <ul class="activity-list" id="dashRecentActivity">
@@ -161,7 +168,7 @@
                     </div>
                     <div class="card expiring-soon">
                         <div class="card-header">
-                            <h2>Expiring Memberships</h2>
+                            <h2 data-i18n="expiring_soon">Expiring Memberships</h2>
                         </div>
                         <div class="card-body">
                             <ul class="expiry-list" id="dashExpiring">
@@ -175,40 +182,43 @@
             <!-- ==================== MEMBERS ==================== -->
             <section class="page hidden" id="page-members">
                 <div class="page-header">
-                    <h1>Members & Attendance</h1>
-                    <p class="page-subtitle">Manage memberships, check-ins, and absences</p>
+                    <h1 data-i18n="members_header">Members & Attendance</h1>
+                    <p class="page-subtitle" data-i18n="members_subtitle">Manage memberships, check-ins, and absences
+                    </p>
                 </div>
                 <div class="toolbar">
                     <div class="search-box">
                         <span class="search-icon">🔍</span>
-                        <input type="text" id="memberSearch" placeholder="Search members..." autocomplete="off">
+                        <input type="text" id="memberSearch" placeholder="Search members..."
+                            data-i18n="placeholder_search_mem" autocomplete="off">
                     </div>
-                    <button class="btn btn-primary" id="btnAddMember"><span>+</span> Add Member</button>
+                    <button class="btn btn-primary" id="btnAddMember"><span data-i18n="new_member">+ Add
+                            Member</span></button>
                 </div>
                 <div class="card">
                     <div class="table-wrapper">
                         <table class="data-table" id="membersTable">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Phone</th>
-                                    <th>Plan</th>
-                                    <th>Expires</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th data-i18n="member_name">Name</th>
+                                    <th data-i18n="phone">Phone</th>
+                                    <th data-i18n="plan">Plan</th>
+                                    <th data-i18n="expires">Expires</th>
+                                    <th data-i18n="status">Status</th>
+                                    <th data-i18n="actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="membersTableBody"></tbody>
                         </table>
                         <div class="table-empty" id="membersEmpty">
                             <span class="empty-icon">👥</span>
-                            <p>No members yet. Add your first member!</p>
+                            <p data-i18n="members_empty">No members yet. Add your first member!</p>
                         </div>
                     </div>
                 </div>
                 <div class="card" style="margin-top:1.5rem;">
                     <div class="card-header">
-                        <h2>Today's Attendance</h2>
+                        <h2 data-i18n="today_attendance">Today's Attendance</h2>
                         <div style="display: flex; gap: 0.5rem;">
                             <button class="btn btn-secondary btn-sm" id="btnExportAttendance"><span>📋</span>
                                 Report</button>
@@ -227,8 +237,9 @@
             <!-- ==================== FINANCE ==================== -->
             <section class="page hidden" id="page-finance">
                 <div class="page-header">
-                    <h1>Financial Records</h1>
-                    <p class="page-subtitle">Track income, expenses, and overall profitability</p>
+                    <h1 data-i18n="finance_header">Financial Records</h1>
+                    <p class="page-subtitle" data-i18n="finance_subtitle">Track income, expenses, and overall
+                        profitability</p>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card stat-income">
@@ -249,24 +260,26 @@
                         <div class="stat-icon">💎</div>
                         <div class="stat-info">
                             <span class="stat-value" id="finProfit">Rp 0</span>
-                            <span class="stat-label">Net Profit</span>
+                            <span class="stat-label" data-i18n="net_profit">Net Profit</span>
                         </div>
                     </div>
                 </div>
                 <div class="toolbar">
                     <div class="filter-group">
                         <select id="finMonthFilter" class="select-input">
-                            <option value="">All Months</option>
+                            <option value="" data-i18n="all_months">All Months</option>
                         </select>
                         <select id="finTypeFilter" class="select-input">
-                            <option value="">All Types</option>
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
+                            <option value="" data-i18n="all_types">All Types</option>
+                            <option value="income" data-i18n="income">Income</option>
+                            <option value="expense" data-i18n="expense">Expense</option>
                         </select>
                     </div>
                     <div class="toolbar-actions">
-                        <button class="btn btn-secondary" id="btnExportFinance"><span>📋</span> Export Report</button>
-                        <button class="btn btn-primary" id="btnAddTransaction"><span>+</span> Add Transaction</button>
+                        <button class="btn btn-secondary" id="btnExportFinance"><span data-i18n="export_report">📋
+                                Export Report</span></button>
+                        <button class="btn btn-primary" id="btnAddTransaction"><span data-i18n="new_transaction">+ Add
+                                Transaction</span></button>
                     </div>
                 </div>
                 <div class="card">
@@ -274,20 +287,20 @@
                         <table class="data-table" id="financeTable">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Category</th>
-                                    <th>Member</th>
-                                    <th>Amount</th>
-                                    <th>Note</th>
-                                    <th>Actions</th>
+                                    <th data-i18n="date">Date</th>
+                                    <th data-i18n="type">Type</th>
+                                    <th data-i18n="category">Category</th>
+                                    <th data-i18n="reference">Reference</th>
+                                    <th data-i18n="amount">Amount</th>
+                                    <th data-i18n="note">Note</th>
+                                    <th data-i18n="actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="financeTableBody"></tbody>
                         </table>
                         <div class="table-empty" id="financeEmpty">
                             <span class="empty-icon">💰</span>
-                            <p>No transactions yet. Start tracking your finances!</p>
+                            <p data-i18n="finance_empty">No transactions yet. Start tracking your finances!</p>
                         </div>
                     </div>
                 </div>
@@ -296,8 +309,8 @@
             <!-- ==================== FOOD STOCK ==================== -->
             <section class="page hidden" id="page-stock">
                 <div class="page-header">
-                    <h1>Food Stock</h1>
-                    <p class="page-subtitle">Inventory management and stock alerts</p>
+                    <h1 data-i18n="stock_header">Food Stock</h1>
+                    <p class="page-subtitle" data-i18n="stock_subtitle">Inventory management and stock alerts</p>
                 </div>
                 <div class="toolbar">
                     <div class="search-box">
@@ -305,8 +318,10 @@
                         <input type="text" id="stockSearch" placeholder="Search items..." autocomplete="off">
                     </div>
                     <div class="toolbar-actions">
-                        <button class="btn btn-secondary" id="btnStockMovement">📦 Stock Movement</button>
-                        <button class="btn btn-primary" id="btnAddStock"><span>+</span> Add Item</button>
+                        <button class="btn btn-secondary" id="btnStockMovement" data-i18n="stock_movement">📦 Stock
+                            Movement</button>
+                        <button class="btn btn-primary" id="btnAddStock" data-i18n="add_item"><span>+</span> Add
+                            Item</button>
                     </div>
                 </div>
                 <div class="card">
@@ -314,29 +329,30 @@
                         <table class="data-table" id="stockTable">
                             <thead>
                                 <tr>
-                                    <th>Item</th>
-                                    <th>Category</th>
-                                    <th>Quantity</th>
-                                    <th>Unit</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th data-i18n="item_name">Item</th>
+                                    <th data-i18n="category">Category</th>
+                                    <th data-i18n="quantity">Quantity</th>
+                                    <th data-i18n="unit">Unit</th>
+                                    <th data-i18n="status">Status</th>
+                                    <th data-i18n="actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="stockTableBody"></tbody>
                         </table>
                         <div class="table-empty" id="stockEmpty">
                             <span class="empty-icon">🥤</span>
-                            <p>No stock items yet. Add your first item!</p>
+                            <p data-i18n="stock_empty">No stock items yet. Add your first item!</p>
                         </div>
                     </div>
                 </div>
                 <div class="card" style="margin-top:1.5rem;">
                     <div class="card-header">
-                        <h2>Recent Stock Movements</h2>
+                        <h2 data-i18n="recent_stock_movements">Recent Stock Movements</h2>
                     </div>
                     <div class="card-body">
                         <ul class="movement-log" id="stockMovementLog">
-                            <li class="activity-empty">No stock movements recorded</li>
+                            <li class="activity-empty" data-i18n="stock_movements_empty">No stock movements recorded
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -345,24 +361,33 @@
             <!-- ==================== SCAN CHECK-IN ==================== -->
             <section class="page hidden" id="page-scan">
                 <div class="page-header">
-                    <h1>Scan Check-in</h1>
-                    <p class="page-subtitle">Members can check in by scanning their QR code</p>
+                    <h1 data-i18n="scan">Scan Check-in</h1>
+                    <p class="page-subtitle" data-i18n="scan_subtitle">Members can check in by scanning their QR code
+                    </p>
                 </div>
                 <div class="scan-container">
                     <div class="card scan-card">
                         <div class="card-body" style="text-align:center; padding:2rem;">
                             <div class="scan-input-area">
                                 <span style="font-size:3rem;">📷</span>
-                                <p style="color:var(--text-secondary); margin:1rem 0;">Enter or paste a member ID to
+                                <p style="color:var(--text-secondary); margin:1rem 0;" data-i18n="scan_instruction">
+                                    Enter or paste a member ID to
                                     check in</p>
-                                <div class="form-group" style="max-width:400px; margin:0 auto;">
-                                    <input type="text" id="scanInput" placeholder="Scan QR code or paste Member ID..."
+                                <div class="form-group"
+                                    style="max-width:400px; margin:0 auto; display: flex; gap: 0.5rem; flex-direction: column;">
+                                    <input type="text" id="scanInput" placeholder="Scan QR, Phone, or Member ID..."
                                         autocomplete="off">
+                                    <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                        <button class="btn btn-primary" id="btnScanCheckin" data-i18n="scan_btn">Check
+                                            In</button>
+                                        <button class="btn btn-secondary" id="btnToggleCamera"
+                                            data-i18n="camera_btn">Scan Camera</button>
+                                    </div>
                                 </div>
-                                <button class="btn btn-primary" id="btnScanCheckin" style="margin-top:0.5rem;">✅ Check
-                                    In</button>
+                                <div id="reader"
+                                    style="width: 100%; max-width: 500px; margin: 1.5rem auto 0; display: none;"></div>
                             </div>
-                            <div id="scanResult" class="scan-result" style="display:none;"></div>
+                            <div id="scanResult" class="scan-result" style="display:none; margin-top: 1.5rem;"></div>
                         </div>
                     </div>
                 </div>

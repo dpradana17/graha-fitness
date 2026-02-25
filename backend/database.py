@@ -97,10 +97,12 @@ class Transaction(Base):
     category = Column(String, nullable=False)
     amount = Column(BigInteger, nullable=False)
     member_id = Column(String, ForeignKey("members.id", ondelete="SET NULL"), nullable=True)
+    item_id = Column(String, ForeignKey("stock_items.id", ondelete="SET NULL"), nullable=True)
     note = Column(Text, default="")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     member = relationship("Member", back_populates="transactions")
+    item = relationship("StockItem")
 
 
 class StockItem(Base):

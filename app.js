@@ -10,6 +10,287 @@
   const API_BASE = '/api';
   const SESSION_KEY = 'gf_session';
 
+  // ============================
+  //      I18N / LANGUAGES
+  // ============================
+  const translations = {
+    id: {
+      dashboard: "Dasbor",
+      members: "Anggota",
+      finance: "Keuangan",
+      stock: "Stok Barang",
+      scan: "Scan Check-in",
+      welcome: "Selamat Datang",
+      logout: "Keluar",
+      loading: "Memuat data...",
+      active: "AKTIF",
+      expired: "KEDALUWARSA",
+      search: "Cari...",
+      new_member: "Anggota Baru",
+      new_transaction: "Transaksi Baru",
+      add_item: "Tambah Barang",
+      total_members: "Total Anggota",
+      active_members: "Anggota Aktif",
+      monthly_income: "Pendapatan Bulan Ini",
+      monthly_expense: "Pengeluaran Bulan Ini",
+      profit: "Keuntungan",
+      member_name: "Nama Anggota",
+      phone: "No. Telepon",
+      plan: "Paket",
+      status: "Status",
+      expires: "Berakhir",
+      actions: "Aksi",
+      save: "Simpan",
+      cancel: "Batal",
+      delete: "Hapus",
+      edit: "Edit",
+      checkin_success: "Selamat Datang",
+      checkin_failed: "Akses Ditolak",
+      scan_prompt: "Scan QR, No. HP, atau Member ID...",
+      scan_btn: "Check In",
+      camera_btn: "Scan Kamera",
+      stop_camera: "Stop Kamera",
+      membership_expired: "Keanggotaan Kedaluwarsa",
+      checked_in_at: "Check-in pukul",
+      income: "Pendapatan",
+      expense: "Pengeluaran",
+      category: "Kategori",
+      amount: "Jumlah",
+      note: "Catatan",
+      items: "Barang",
+      username: "Nama Pengguna",
+      password: "Kata Sandi",
+      sign_in: "Masuk",
+      sign_in_hint: "Masuk ke akun Anda",
+      placeholder_user: "Masukkan nama pengguna",
+      placeholder_pass: "Masukkan kata sandi",
+      dash_subtitle: "Ringkasan operasional gym Anda",
+      today_checkins: "Check-in Hari Ini",
+      low_stock: "Alert Stok Rendah",
+      recent_activity: "Aktivitas Terkini",
+      expiring_soon: "Keanggotaan Akan Berakhir",
+      members_header: "Anggota & Presensi",
+      members_subtitle: "Kelola keanggotaan, check-in, dan absensi",
+      placeholder_search_mem: "Cari anggota...",
+      members_empty: "Belum ada anggota. Tambahkan anggota pertama Anda!",
+      today_attendance: "Presensi Hari Ini",
+      finance_header: "Catatan Keuangan",
+      finance_subtitle: "Pantau pendapatan, pengeluaran, dan profit",
+      net_profit: "Laba Bersih",
+      all_months: "Semua Bulan",
+      all_types: "Semua Tipe",
+      export_report: "Ekspor Laporan",
+      date: "Tanggal",
+      type: "Tipe",
+      reference: "Referensi",
+      finance_empty: "Belum ada transaksi. Mulai catat keuangan Anda!",
+      stock_header: "Stok Barang",
+      stock_subtitle: "Manajemen inventaris dan alert stok",
+      placeholder_search_items: "Cari barang...",
+      stock_movement: "Pergerakan Stok",
+      stock_empty: "Belum ada barang. Tambahkan barang pertama Anda!",
+      scan_subtitle: "Anggota dapat check-in dengan scan kode QR",
+      scan_instruction: "Masukkan atau tempel ID anggota untuk check-in",
+      start_date: "Tanggal Mulai",
+      end_date: "Tanggal Selesai",
+      delete_records: "Hapus Catatan",
+      clear_attendance: "Hapus Log Presensi",
+      update: "Perbarui",
+      add: "Tambah",
+      added: "Ditambahkan",
+      removed: "Dihapus",
+      no_member: "Bukan Anggota",
+      no_item: "Bukan Barang",
+      optional: "opsional",
+      transaction: "Transaksi",
+      link_member: "Hubungkan ke Anggota",
+      link_item: "Hubungkan ke Barang",
+      all_months: "Semua Bulan",
+      all_types: "Semua Tipe",
+      low_stock_threshold: "Ambang Stok Rendah",
+      item_name: "Nama Barang",
+      quantity: "Jumlah",
+      unit: "Satuan",
+      recent_activity_empty: "Tidak ada aktivitas terbaru",
+      expiring_empty: "Tidak ada keanggotaan yang akan berakhir",
+      confirm_clear_attendance: "Apakah Anda yakin ingin menghapus SEMUA catatan presensi dari {start} ke {end}?",
+      confirm_delete_member: "Hapus anggota ini? Tindakan ini tidak dapat dibatalkan.",
+      confirm_delete_stock: "Hapus barang stok ini?",
+      clear_attendance_warning: "Ini akan menghapus catatan presensi secara permanen dalam rentang yang dipilih.",
+      access_denied: "Akses Ditolak",
+      welcome: "Selamat Datang",
+      status: "Status",
+      expires: "Kedaluwarsa",
+      checked_in_at: "Check-in pada",
+      membership_expired: "Keanggotaan kedaluwarsa pada",
+      camera_error: "Kesalahan kamera: ",
+      scan_camera: "Scan Kamera",
+      share_wa: "Bagikan via WhatsApp",
+      download_qr: "Unduh QR",
+      member_qr: "Kode QR Anggota",
+      invalid_login: "Nama pengguna atau kata sandi salah",
+      online: "Online",
+      sync_now: "Sinkron Sekarang",
+      attendance_empty: "Belum ada check-in hari ini",
+      confirm_delete_attendance: "Hapus catatan check-in ini?",
+      expiring: "Akan Berakhir",
+      checkin: "Check-in",
+      low_stock_btn: "Stok Rendah",
+    },
+    en: {
+      dashboard: "Dashboard",
+      members: "Members",
+      finance: "Finance",
+      stock: "Food Stock",
+      scan: "Scan Check-in",
+      welcome: "Welcome",
+      logout: "Logout",
+      loading: "Loading data...",
+      active: "ACTIVE",
+      expired: "EXPIRED",
+      search: "Search...",
+      new_member: "New Member",
+      new_transaction: "New Transaction",
+      add_item: "Add Item",
+      total_members: "Total Members",
+      active_members: "Active Members",
+      monthly_income: "Monthly Income",
+      monthly_expense: "Monthly Expense",
+      profit: "Profit",
+      member_name: "Member Name",
+      phone: "Phone",
+      plan: "Plan",
+      status: "Status",
+      expires: "Expires",
+      actions: "Actions",
+      save: "Save",
+      cancel: "Cancel",
+      delete: "Delete",
+      edit: "Edit",
+      checkin_success: "Welcome",
+      checkin_failed: "Access Denied",
+      scan_prompt: "Scan QR, Phone, or Member ID...",
+      scan_btn: "Check In",
+      camera_btn: "Scan Camera",
+      stop_camera: "Stop Camera",
+      membership_expired: "Membership Expired",
+      checked_in_at: "Checked in at",
+      income: "Income",
+      expense: "Expense",
+      category: "Category",
+      amount: "Amount",
+      note: "Note",
+      items: "Items",
+      username: "Username",
+      password: "Password",
+      sign_in: "Sign In",
+      sign_in_hint: "Sign in to your account",
+      placeholder_user: "Enter username",
+      placeholder_pass: "Enter password",
+      dash_subtitle: "Overview of your gym operations",
+      today_checkins: "Today's Check-ins",
+      low_stock: "Low Stock Alerts",
+      recent_activity: "Recent Activity",
+      expiring_soon: "Expiring Memberships",
+      members_header: "Members & Attendance",
+      members_subtitle: "Manage memberships, check-ins, and absences",
+      placeholder_search_mem: "Search members...",
+      members_empty: "No members yet. Add your first member!",
+      today_attendance: "Today's Attendance",
+      finance_header: "Financial Records",
+      finance_subtitle: "Track income, expenses, and overall profitability",
+      net_profit: "Net Profit",
+      all_months: "All Months",
+      all_types: "All Types",
+      export_report: "Export Report",
+      date: "Date",
+      type: "Type",
+      reference: "Reference",
+      finance_empty: "No transactions yet. Start tracking your finances!",
+      stock_header: "Food Stock",
+      stock_subtitle: "Inventory management and stock alerts",
+      placeholder_search_items: "Search items...",
+      stock_movement: "Stock Movement",
+      stock_empty: "No stock items yet. Add your first item!",
+      scan_subtitle: "Members can check in by scanning their QR code",
+      scan_instruction: "Enter or paste a member ID to check in",
+      start_date: "Start Date",
+      end_date: "End Date",
+      delete_records: "Delete Records",
+      clear_attendance: "Clear Attendance Logs",
+      update: "Update",
+      add: "Add",
+      added: "Added",
+      removed: "Removed",
+      no_member: "No Member",
+      no_item: "No Item",
+      optional: "optional",
+      transaction: "Transaction",
+      link_member: "Link to Member",
+      link_item: "Link to Stock Item",
+      all_months: "All Months",
+      all_types: "All Types",
+      low_stock_threshold: "Low-Stock Threshold",
+      item_name: "Item Name",
+      quantity: "Quantity",
+      unit: "Unit",
+      recent_activity_empty: "No recent activity",
+      expiring_empty: "No expiring memberships",
+      confirm_clear_attendance: "Are you sure you want to delete ALL attendance records from {start} to {end}?",
+      confirm_delete_member: "Delete this member? This cannot be undone.",
+      confirm_delete_stock: "Delete this stock item?",
+      clear_attendance_warning: "This will permanently delete attendance records within the selected range.",
+      access_denied: "Access Denied",
+      welcome: "Welcome",
+      status: "Status",
+      expires: "Expires",
+      checked_in_at: "Checked in at",
+      membership_expired: "Membership expired on",
+      camera_error: "Camera error: ",
+      scan_camera: "Scan Camera",
+      share_wa: "Share via WhatsApp",
+      download_qr: "Download QR",
+      member_qr: "Member QR Code",
+      invalid_login: "Invalid username or password",
+      online: "Online",
+      sync_now: "Sync Now",
+      attendance_empty: "No check-ins today",
+      confirm_delete_attendance: "Delete this check-in record?",
+      expiring: "Expiring",
+      checkin: "Check-in",
+      low_stock_btn: "Low Stock",
+    }
+  };
+
+  let currentLang = localStorage.getItem('gymLang') || 'id';
+
+  function applyTranslations() {
+    const t = translations[currentLang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key]) {
+        if (el.tagName === 'INPUT' && el.placeholder) {
+          el.placeholder = t[key];
+        } else {
+          el.innerHTML = t[key];
+        }
+      }
+    });
+
+    // Update active flag UI
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+  }
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('gymLang', lang);
+    applyTranslations();
+    // Re-render current page to update dynamic content
+    if (currentPage) renderPage(currentPage);
+  }
+
   // ---- Helpers ----
   function formatDate(d) {
     if (!d) return '—';
@@ -299,15 +580,16 @@
       document.getElementById('dashTodayCheckins').textContent = data.todayCheckins;
       document.getElementById('dashLowStock').textContent = data.lowStock;
 
+      const t = translations[currentLang];
       const actEl = document.getElementById('dashRecentActivity');
       actEl.innerHTML = data.recentActivity.length === 0
-        ? '<li class="activity-empty">No recent activity</li>'
+        ? `<li class="activity-empty">${t.recent_activity_empty || 'No recent activity'}</li>`
         : data.recentActivity.map(a => `<li><span class="log-icon">${a.icon}</span> ${a.text} <span class="log-time">${formatDate(a.time)}</span></li>`).join('');
 
       const expEl = document.getElementById('dashExpiring');
       expEl.innerHTML = data.expiring.length === 0
-        ? '<li class="activity-empty">No expiring memberships</li>'
-        : data.expiring.map(m => `<li><span class="log-icon">⏰</span> ${m.name} <span class="badge badge-warning">Expires ${formatDate(m.endDate)}</span></li>`).join('');
+        ? `<li class="activity-empty">${t.expiring_empty || 'No expiring memberships'}</li>`
+        : data.expiring.map(m => `<li><span class="log-icon">⏰</span> ${m.name} <span class="badge badge-warning">${t.expires || 'Expires'} ${formatDate(m.endDate)}</span></li>`).join('');
     } catch (e) {
       console.error('Dashboard error:', e);
     } finally {
@@ -332,12 +614,13 @@
         emptyEl.classList.remove('hidden');
       } else {
         emptyEl.classList.add('hidden');
+        const t = translations[currentLang];
         tbody.innerHTML = members.map(m => {
           const daysLeft = Math.ceil((new Date(m.endDate) - new Date()) / 86400000);
           let statusBadge;
-          if (m.status === 'expired' || daysLeft < 0) statusBadge = '<span class="badge badge-expired">Expired</span>';
-          else if (daysLeft <= 7) statusBadge = '<span class="badge badge-warning">Expiring</span>';
-          else statusBadge = '<span class="badge badge-active">Active</span>';
+          if (m.status === 'expired' || daysLeft < 0) statusBadge = `<span class="badge badge-expired">${t.expired || 'Expired'}</span>`;
+          else if (daysLeft <= 7) statusBadge = `<span class="badge badge-warning">${t.expiring || 'Expiring'}</span>`;
+          else statusBadge = `<span class="badge badge-active">${t.active || 'Active'}</span>`;
 
           return `<tr>
             <td style="color:var(--text-primary);font-weight:500;">${m.name}</td>
@@ -347,11 +630,11 @@
             <td>${statusBadge}</td>
             <td>
               <div class="action-btns">
-                <button class="btn btn-sm btn-success" onclick="app.checkIn('${m.id}')">Check-in</button>
+                <button class="btn btn-sm btn-success" onclick="app.checkIn('${m.id}')">${t.checkin || 'Check-in'}</button>
                 <button class="btn btn-sm btn-secondary" onclick="app.showMemberQR('${m.id}')">QR</button>
                 <button class="btn btn-sm btn-secondary" onclick="app.shareMemberQR('${m.id}')">📤 WA</button>
-                <button class="btn btn-sm btn-secondary" onclick="app.editMember('${m.id}')">Edit</button>
-                <button class="btn btn-sm btn-danger" onclick="app.deleteMember('${m.id}')">Delete</button>
+                <button class="btn btn-sm btn-secondary" onclick="app.editMember('${m.id}')">${t.edit || 'Edit'}</button>
+                <button class="btn btn-sm btn-danger" onclick="app.deleteMember('${m.id}')">${t.delete || 'Delete'}</button>
               </div>
             </td>
           </tr>`;
@@ -371,11 +654,12 @@
       const isSAdmin = isSuperAdmin();
       const logEl = document.getElementById('attendanceLog');
 
+      const t = translations[currentLang];
       logEl.innerHTML = records.length === 0
-        ? '<li class="activity-empty">No check-ins today</li>'
+        ? `<li class="activity-empty">${t.attendance_empty || 'No check-ins today'}</li>`
         : records.map(a => {
           const deleteBtn = isSAdmin
-            ? `<button class="btn-icon-danger" onclick="app.deleteAttendance('${a.id}')" title="Delete">✕</button>`
+            ? `<button class="btn-icon-danger" onclick="app.deleteAttendance('${a.id}')" title="${t.delete || 'Delete'}">✕</button>`
             : '';
           return `<li>
               <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
@@ -390,7 +674,8 @@
   }
 
   async function deleteAttendance(id) {
-    if (!confirm('Delete this check-in record?')) return;
+    const t = translations[currentLang];
+    if (!confirm(t.confirm_delete_attendance || 'Delete this check-in record?')) return;
     try {
       await apiDelete(`/attendance/${id}`);
       renderAttendanceLog();
@@ -400,32 +685,34 @@
   }
 
   function showClearAttendanceModal() {
+    const t = translations[currentLang];
     const html = `
       <form id="clearAttForm">
-        <p style="margin-bottom:1rem; color:var(--text-secondary);">This will permanently delete attendance records within the selected range.</p>
+        <p style="margin-bottom:1rem; color:var(--text-secondary);">${t.clear_attendance_warning || 'This will permanently delete attendance records.'}</p>
         <div class="form-row">
           <div class="form-group">
-            <label>Start Date</label>
+            <label>${t.start_date || 'Start Date'}</label>
             <input type="date" id="clrAttStart" value="${today()}">
           </div>
           <div class="form-group">
-            <label>End Date</label>
+            <label>${t.end_date || 'End Date'}</label>
             <input type="date" id="clrAttEnd" value="${today()}">
           </div>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-danger">Delete Records</button>
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">${t.cancel}</button>
+          <button type="submit" class="btn btn-danger">${t.delete_records || 'Delete Records'}</button>
         </div>
       </form>
     `;
-    openModal('Clear Attendance Logs', html);
+    openModal(t.clear_attendance || 'Clear Attendance Logs', html);
 
     document.getElementById('clearAttForm').onsubmit = async (e) => {
       e.preventDefault();
       const start = document.getElementById('clrAttStart').value;
       const end = document.getElementById('clrAttEnd').value;
-      if (!confirm(`Are you sure you want to delete ALL attendance records from ${start} to ${end}?`)) return;
+      const t = translations[currentLang];
+      if (!confirm((t.confirm_clear_attendance || "Are you sure you want to delete records?").replace('{start}', start).replace('{end}', end))) return;
 
       const btn = e.target.querySelector('button[type="submit"]');
       setLoading(btn, true);
@@ -450,19 +737,20 @@
 
   function showMemberForm(member = null) {
     const isEdit = !!member;
+    const t = translations[currentLang];
     const html = `
       <form id="memberForm">
         <div class="form-group">
-          <label>Full Name</label>
+          <label>${t.member_name}</label>
           <input type="text" id="mfName" value="${member ? member.name : ''}" required>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Phone</label>
+            <label>${t.phone}</label>
             <input type="text" id="mfPhone" value="${member ? member.phone : ''}" placeholder="e.g. 08123456789">
           </div>
           <div class="form-group">
-            <label>Plan</label>
+            <label>${t.plan}</label>
             <select id="mfPlan">
               <option value="Monthly" ${member && member.plan === 'Monthly' ? 'selected' : ''}>Monthly</option>
               <option value="3 Months" ${member && member.plan === '3 Months' ? 'selected' : ''}>3 Months</option>
@@ -473,21 +761,21 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Start Date</label>
+            <label>${t.start_date || 'Start Date'}</label>
             <input type="date" id="mfStart" value="${member ? member.startDate : today()}">
           </div>
           <div class="form-group">
-            <label>End Date</label>
+            <label>${t.end_date || t.expires}</label>
             <input type="date" id="mfEnd" value="${member ? member.endDate : ''}">
           </div>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Add'} Member</button>
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">${t.cancel}</button>
+          <button type="submit" class="btn btn-primary">${isEdit ? t.update || 'Update' : t.add || 'Add'} ${t.members || 'Member'}</button>
         </div>
       </form>
     `;
-    openModal(isEdit ? 'Edit Member' : 'New Member', html);
+    openModal(isEdit ? `${t.edit} ${t.members || 'Member'}` : t.new_member, html);
 
     const planEl = document.getElementById('mfPlan');
     const startEl = document.getElementById('mfStart');
@@ -557,7 +845,8 @@
   }
 
   async function deleteMember(id) {
-    if (!confirm('Delete this member? This cannot be undone.')) return;
+    const t = translations[currentLang];
+    if (!confirm(t.confirm_delete_member || 'Delete this member? This cannot be undone.')) return;
     try {
       await apiDelete(`/members/${id}`);
       renderMembers();
@@ -584,10 +873,11 @@
         apiGet('/transactions/summary'),
       ]);
 
+      const t = translations[currentLang];
       // Month filter options
       const monthSel = document.getElementById('finMonthFilter');
       const currentVal = monthSel.value;
-      monthSel.innerHTML = '<option value="">All Months</option>' +
+      monthSel.innerHTML = `<option value="">${t.all_months || 'All Months'}</option>` +
         summary.months.map(m => `<option value="${m}" ${m === currentVal ? 'selected' : ''}>${m}</option>`).join('');
 
       document.getElementById('finIncome').textContent = formatCurrency(summary.income);
@@ -607,7 +897,11 @@
         emptyEl.classList.add('hidden');
         tbody.innerHTML = transactions.map(t => {
           const badgeCls = t.type === 'income' ? 'badge-income' : 'badge-expense';
-          const memberName = t.memberName || '—';
+
+          let referenceName = '—';
+          if (t.memberName) referenceName = `👤 ${t.memberName}`;
+          else if (t.itemName) referenceName = `📦 ${t.itemName}`;
+
           const deleteBtn = canDelete
             ? `<button class="btn btn-sm btn-danger" onclick="app.deleteTransaction('${t.id}')">Delete</button>`
             : '';
@@ -616,7 +910,7 @@
             <td>${formatDate(t.date)}</td>
             <td><span class="badge ${badgeCls}">${t.type}</span></td>
             <td>${t.category}</td>
-            <td style="color:var(--text-primary);font-weight:500;">${memberName}</td>
+            <td style="color:var(--text-primary);font-weight:500;">${referenceName}</td>
             <td style="font-weight:600;color:${t.type === 'income' ? 'var(--accent-emerald)' : 'var(--accent-coral)'}">
               ${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}
             </td>
@@ -639,54 +933,79 @@
 
   async function showTransactionForm(tx = null) {
     const isEdit = !!tx;
-    const members = await loadMembersForForm();
+    const t = translations[currentLang];
+    const [members, stockItems] = await Promise.all([
+      loadMembersForForm(),
+      apiGet('/stock').catch(() => [])
+    ]);
+
     const memberOpts = members.map(m =>
       `<option value="${m.id}" ${tx && tx.memberId === m.id ? 'selected' : ''}>${m.name} (${m.plan})</option>`
+    ).join('');
+
+    const stockOpts = stockItems.map(i =>
+      `<option value="${i.id}" ${tx && tx.itemId === i.id ? 'selected' : ''}>${i.name}</option>`
     ).join('');
 
     const html = `
       <form id="txForm">
         <div class="form-row">
           <div class="form-group">
-            <label>Type</label>
+            <label>${t.type}</label>
             <select id="txType">
-              <option value="income" ${tx && tx.type === 'income' ? 'selected' : ''}>Income</option>
-              <option value="expense" ${tx && tx.type === 'expense' ? 'selected' : ''}>Expense</option>
+              <option value="income" ${tx && tx.type === 'income' ? 'selected' : ''}>${t.income}</option>
+              <option value="expense" ${tx && tx.type === 'expense' ? 'selected' : ''}>${t.expense}</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Date</label>
+            <label>${t.date}</label>
             <input type="date" id="txDate" value="${tx ? tx.date : today()}">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Category</label>
+            <label>${t.category}</label>
             <input type="text" id="txCategory" value="${tx ? tx.category : ''}" placeholder="e.g. Membership Fee" required>
           </div>
           <div class="form-group">
-            <label>Amount (Rp)</label>
+            <label>${t.amount} (Rp)</label>
             <input type="number" id="txAmount" value="${tx ? tx.amount : ''}" min="0" step="1000" required>
           </div>
         </div>
-        <div class="form-group">
-          <label>Link to Member (optional)</label>
-          <select id="txMember">
-            <option value="">— No member —</option>
-            ${memberOpts}
-          </select>
+        <div class="form-row">
+          <div class="form-group">
+            <label>${t.link_member || 'Link to Member'} (${t.optional || 'optional'})</label>
+            <select id="txMember">
+              <option value="">— ${t.no_member || 'No member'} —</option>
+              ${memberOpts}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>${t.link_item || 'Link to Stock Item'} (${t.optional || 'optional'})</label>
+            <select id="txItem">
+              <option value="">— ${t.no_item || 'No item'} —</option>
+              ${stockOpts}
+            </select>
+          </div>
         </div>
         <div class="form-group">
-          <label>Note (optional)</label>
+          <label>${t.note} (${t.optional || 'optional'})</label>
           <textarea id="txNote">${tx ? tx.note || '' : ''}</textarea>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Add'} Transaction</button>
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">${t.cancel}</button>
+          <button type="submit" class="btn btn-primary">${isEdit ? t.update || 'Update' : t.add || 'Add'} ${t.transaction || 'Transaction'}</button>
         </div>
       </form>
     `;
-    openModal(isEdit ? 'Edit Transaction' : 'New Transaction', html);
+    openModal(isEdit ? `${t.edit} ${t.transaction || 'Transaction'}` : t.new_transaction, html);
+
+    const memberSelect = document.getElementById('txMember');
+    const itemSelect = document.getElementById('txItem');
+
+    // Mutually exclusive linking
+    memberSelect.onchange = () => { if (memberSelect.value) itemSelect.value = ''; };
+    itemSelect.onchange = () => { if (itemSelect.value) memberSelect.value = ''; };
 
     document.getElementById('txForm').onsubmit = async (e) => {
       e.preventDefault();
@@ -696,7 +1015,8 @@
         date: document.getElementById('txDate').value,
         category: document.getElementById('txCategory').value.trim(),
         amount: Number(document.getElementById('txAmount').value),
-        member_id: document.getElementById('txMember').value || null,
+        member_id: memberSelect.value || null,
+        item_id: itemSelect.value || null,
         note: document.getElementById('txNote').value.trim(),
       };
       if (!data.category || !data.amount) return;
@@ -758,12 +1078,13 @@
         emptyEl.classList.remove('hidden');
       } else {
         emptyEl.classList.add('hidden');
+        const t = translations[currentLang];
         tbody.innerHTML = items.map(i => {
           const qty = Number(i.quantity);
           const isLow = qty <= Number(i.minThreshold);
           const statusBadge = isLow
-            ? '<span class="badge badge-low">Low Stock</span>'
-            : '<span class="badge badge-ok">OK</span>';
+            ? `<span class="badge badge-low">${t.low_stock_btn || 'Low Stock'}</span>`
+            : `<span class="badge badge-ok">OK</span>`;
           return `<tr>
             <td style="color:var(--text-primary);font-weight:500;">${i.name}</td>
             <td>${i.category || '—'}</td>
@@ -772,8 +1093,8 @@
             <td>${statusBadge}</td>
             <td>
               <div class="action-btns">
-                <button class="btn btn-sm btn-secondary" onclick="app.editStockItem('${i.id}')">Edit</button>
-                <button class="btn btn-sm btn-danger" onclick="app.deleteStockItem('${i.id}')">Delete</button>
+                <button class="btn btn-sm btn-secondary" onclick="app.editStockItem('${i.id}')">${t.edit || 'Edit'}</button>
+                <button class="btn btn-sm btn-danger" onclick="app.deleteStockItem('${i.id}')">${t.delete || 'Delete'}</button>
               </div>
             </td>
           </tr>`;
@@ -791,11 +1112,12 @@
     try {
       const movements = await apiGet('/stock/movements');
       const logEl = document.getElementById('stockMovementLog');
+      const t = translations[currentLang];
       logEl.innerHTML = movements.length === 0
-        ? '<li class="activity-empty">No stock movements recorded</li>'
+        ? `<li class="activity-empty">${t.stock_movements_empty || 'No stock movements'}</li>`
         : movements.map(mv => {
           const icon = mv.type === 'in' ? '📥' : '📤';
-          const label = mv.type === 'in' ? 'Added' : 'Removed';
+          const label = mv.type === 'in' ? (t.added || 'Added') : (t.removed || 'Removed');
           return `<li><span class="log-icon">${icon}</span> ${label} ${mv.quantity} × ${mv.itemName}${mv.note ? ' — ' + mv.note : ''} <span class="log-time">${formatDate(mv.date)}</span></li>`;
         }).join('');
     } catch (e) {
@@ -805,39 +1127,40 @@
 
   function showStockItemForm(item = null) {
     const isEdit = !!item;
+    const t = translations[currentLang];
     const html = `
       <form id="stockForm">
         <div class="form-group">
-          <label>Item Name</label>
+          <label>${t.item_name || 'Item Name'}</label>
           <input type="text" id="sfName" value="${item ? item.name : ''}" required>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Category</label>
+            <label>${t.category || 'Category'}</label>
             <input type="text" id="sfCategory" value="${item ? item.category || '' : ''}" placeholder="e.g. Drinks, Supplements">
           </div>
           <div class="form-group">
-            <label>Unit</label>
+            <label>${t.unit || 'Unit'}</label>
             <input type="text" id="sfUnit" value="${item ? item.unit || '' : ''}" placeholder="e.g. pcs, bottles, kg">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Current Quantity</label>
+            <label>${t.quantity || 'Quantity'}</label>
             <input type="number" id="sfQty" value="${item ? item.quantity : '0'}" min="0">
           </div>
           <div class="form-group">
-            <label>Low-Stock Threshold</label>
+            <label>${t.low_stock_threshold || 'Low-Stock Threshold'}</label>
             <input type="number" id="sfMin" value="${item ? item.minThreshold : '5'}" min="0">
           </div>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Add'} Item</button>
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">${t.cancel}</button>
+          <button type="submit" class="btn btn-primary">${isEdit ? t.update || 'Update' : t.add || 'Add'} ${t.items || 'Item'}</button>
         </div>
       </form>
     `;
-    openModal(isEdit ? 'Edit Stock Item' : 'New Stock Item', html);
+    openModal(isEdit ? `${t.edit} ${t.items}` : `${t.new_item}`, html);
 
     document.getElementById('stockForm').onsubmit = async (e) => {
       e.preventDefault();
@@ -934,7 +1257,8 @@
   }
 
   async function deleteStockItem(id) {
-    if (!confirm('Delete this stock item?')) return;
+    const t = translations[currentLang];
+    if (!confirm(t.confirm_delete_stock || 'Delete this stock item?')) return;
     try {
       await apiDelete(`/stock/${id}`);
       renderStock();
@@ -952,19 +1276,20 @@
     const members = await apiGet('/members').catch(() => []);
     const member = members.find(m => m.id === memberId);
     if (!member) return;
+    const t = translations[currentLang];
     const html = `
       <div style="text-align:center;">
         <div id="qrCodeContainer" style="display:inline-block; padding:1rem; background:#fff; border-radius:var(--radius-md); margin-bottom:1rem;"></div>
         <p style="margin:0.75rem 0 0.25rem; font-weight:600; font-size:1.1rem;">${member.name}</p>
-        <p style="color:var(--text-secondary); font-size:0.85rem;">Plan: ${member.plan} • Expires: ${formatDate(member.endDate)}</p>
+        <p style="color:var(--text-secondary); font-size:0.85rem;">${t.plan}: ${member.plan} • ${t.expires}: ${formatDate(member.endDate)}</p>
         <p style="color:var(--text-muted); font-size:0.75rem; margin-top:0.5rem;">ID: ${member.id}</p>
         <div class="form-actions" style="justify-content:center; margin-top:1.5rem;">
-          <button class="btn btn-primary" onclick="app.shareMemberQR('${member.id}')">📤 Share via WhatsApp</button>
-          <button class="btn btn-secondary" onclick="app.downloadQR()">⬇ Download QR</button>
+          <button class="btn btn-primary" onclick="app.shareMemberQR('${member.id}')">📤 ${t.share_wa || 'Share via WhatsApp'}</button>
+          <button class="btn btn-secondary" onclick="app.downloadQR()">⬇ ${t.download_qr || 'Download QR'}</button>
         </div>
       </div>
     `;
-    openModal('Member QR Code', html);
+    openModal(t.member_qr || 'Member QR Code', html);
     setTimeout(() => {
       const container = document.getElementById('qrCodeContainer');
       if (container && typeof QRCode !== 'undefined') {
@@ -1006,13 +1331,58 @@
   // ============================
   //      SCAN CHECK-IN
   // ============================
+  let html5QrCode = null;
+
   function initScanPage() {
     const input = document.getElementById('scanInput');
     const btn = document.getElementById('btnScanCheckin');
+    const btnCamera = document.getElementById('btnToggleCamera');
     const resultDiv = document.getElementById('scanResult');
+
     btn.onclick = () => processScanCheckin(input, resultDiv);
     input.onkeydown = (e) => { if (e.key === 'Enter') processScanCheckin(input, resultDiv); };
+    btnCamera.onclick = () => toggleCameraScanner(resultDiv);
+
     input.focus();
+  }
+
+  async function toggleCameraScanner(resultDiv) {
+    const readerEl = document.getElementById('reader');
+    const btn = document.getElementById('btnToggleCamera');
+
+    if (html5QrCode && html5QrCode.isScanning) {
+      await html5QrCode.stop();
+      readerEl.style.display = 'none';
+      btn.textContent = '📷 Scan Camera';
+      btn.classList.replace('btn-danger', 'btn-secondary');
+      return;
+    }
+
+    if (!html5QrCode) {
+      html5QrCode = new Html5Qrcode("reader");
+    }
+
+    readerEl.style.display = 'block';
+    btn.textContent = '🛑 Stop Camera';
+    btn.classList.replace('btn-secondary', 'btn-danger');
+
+    try {
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          document.getElementById('scanInput').value = decodedText;
+          processScanCheckin(document.getElementById('scanInput'), resultDiv);
+          toggleCameraScanner(resultDiv); // Auto stop after scan
+        },
+        (errorMessage) => { /* ignore */ }
+      );
+    } catch (err) {
+      alert((translations[currentLang].camera_error || "Camera error: ") + err);
+      readerEl.style.display = 'none';
+      btn.textContent = '📷 ' + (translations[currentLang].scan_camera || 'Scan Camera');
+      btn.classList.replace('btn-danger', 'btn-secondary');
+    }
   }
 
   async function processScanCheckin(input, resultDiv) {
@@ -1025,11 +1395,41 @@
     setLoading(btn, true);
     try {
       const result = await apiPost(`/members/${memberId}/checkin`, {});
-      resultDiv.innerHTML = `<div class="scan-feedback scan-success"><span style="font-size:2.5rem;">✅</span><p style="font-weight:600; font-size:1.2rem; margin:0.5rem 0;">Welcome, ${result.memberName}!</p><p style="color:var(--text-secondary);">Checked in at ${result.time}</p></div>`;
+
+      if (result.status === 'checked_in') {
+        const t = translations[currentLang];
+        const statusBadge = result.memberStatus === 'active' ? 'badge-active' : 'badge-warning';
+        resultDiv.innerHTML = `
+          <div class="scan-feedback scan-success" style="animation: bounceIn 0.5s ease;">
+            <span style="font-size:3rem;">✅</span>
+            <p style="font-weight:700; font-size:1.5rem; margin:0.5rem 0;">${t.welcome || 'Welcome'}, ${result.memberName}!</p>
+            <div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
+               <p style="color:var(--text-secondary); margin-bottom: 0.5rem;">${t.status}: <span class="badge ${statusBadge}">${result.memberStatus.toUpperCase()}</span></p>
+               <p style="color:var(--text-secondary);">${t.expires}: <span style="color:var(--text-primary); font-weight:600;">${formatDate(result.endDate)}</span></p>
+            </div>
+            <p style="color:var(--text-muted); font-size: 0.9rem;">${t.checked_in_at || 'Checked in at'} ${result.time}</p>
+          </div>`;
+      } else {
+        const t = translations[currentLang];
+        resultDiv.innerHTML = `
+          <div class="scan-feedback scan-error">
+            <span style="font-size:3rem;">❌</span>
+            <p style="font-weight:700; font-size:1.3rem; margin:0.5rem 0;">${t.access_denied || 'Access Denied'}</p>
+            <p style="color:var(--accent-coral); font-weight: 600;">${result.message}</p>
+            <p style="color:var(--text-secondary); margin-top: 1rem;">${t.members || 'Member'}: ${result.memberName}</p>
+            <p style="color:var(--text-muted);">${t.membership_expired || 'Membership expired on'} ${formatDate(result.endDate)}</p>
+          </div>`;
+      }
+
       input.value = ''; input.focus();
-      setTimeout(() => { resultDiv.style.display = 'none'; }, 4000);
+      // Don't auto-hide if it's an error or expired, give time to read
+      const hideTimeout = result.status === 'checked_in' ? 4000 : 8000;
+      if (window.scanTimeout) clearTimeout(window.scanTimeout);
+      window.scanTimeout = setTimeout(() => { resultDiv.style.display = 'none'; }, hideTimeout);
+
     } catch (e) {
-      resultDiv.innerHTML = `<div class="scan-feedback scan-error"><span style="font-size:2.5rem;">❌</span><p style="font-weight:600; font-size:1.1rem; margin:0.5rem 0;">Check-in Failed</p><p style="color:var(--text-muted);">${e.message}</p></div>`;
+      const t = translations[currentLang];
+      resultDiv.innerHTML = `<div class="scan-feedback scan-error"><span style="font-size:2.5rem;">❌</span><p style="font-weight:600; font-size:1.1rem; margin:0.5rem 0;">${t.checkin_failed || 'Check-in Failed'}</p><p style="color:var(--text-muted);">${e.message}</p></div>`;
       input.value = ''; input.focus();
     } finally {
       setLoading(btn, false);
@@ -1052,8 +1452,9 @@
         document.getElementById('loginError').style.display = 'none';
         showApp();
       } catch (err) {
+        const t = translations[currentLang];
         const errEl = document.getElementById('loginError');
-        errEl.textContent = 'Invalid username or password';
+        errEl.textContent = t.invalid_login || 'Invalid username or password';
         errEl.style.display = 'block';
       } finally {
         setLoading(btn, false);
@@ -1075,7 +1476,8 @@
     }
 
     // Date
-    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+    const t = translations[currentLang];
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString(currentLang === 'id' ? 'id-ID' : 'en-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
 
@@ -1287,6 +1689,7 @@
     showMemberQR, shareMemberQR, downloadQR,
     deleteAttendance,
     closeModal,
+    setLanguage,
   };
 
   // Registration & Init
@@ -1301,5 +1704,6 @@
   document.addEventListener('DOMContentLoaded', () => {
     init();
     updateSyncIndicator();
+    applyTranslations();
   });
 })();
