@@ -10,17 +10,12 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
-import pandas as pd
-import io
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, landscape
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, date, timedelta
 from jose import jwt, JWTError
+import io
 
 from .database import init_db, get_db, User, Member, Attendance, Transaction, StockItem, StockMovement, generate_uuid
 
@@ -561,6 +556,9 @@ def list_stock_movements(user: User = Depends(get_current_user), db: Session = D
 @app.get("/api/reports/finance/export")
 def export_finance_report(format: str = "xlsx", start_date: Optional[str] = None, end_date: Optional[str] = None,
                           user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    import pandas as pd
+    import io
+
     query = db.query(Transaction)
     if start_date:
         query = query.filter(Transaction.date >= start_date)
@@ -599,6 +597,11 @@ def export_finance_report(format: str = "xlsx", start_date: Optional[str] = None
         )
     
     elif format == "pdf":
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import letter, landscape
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+        from reportlab.lib.styles import getSampleStyleSheet
+        
         output = io.BytesIO()
         doc = SimpleDocTemplate(output, pagesize=landscape(letter))
         elements = []
@@ -646,6 +649,8 @@ def export_finance_report(format: str = "xlsx", start_date: Optional[str] = None
 @app.get("/api/reports/attendance/export")
 def export_attendance_report(format: str = "xlsx", start_date: Optional[str] = None, end_date: Optional[str] = None,
                              user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    import pandas as pd
+    import io
     query = db.query(Attendance)
     if start_date:
         query = query.filter(Attendance.date >= start_date)
@@ -678,6 +683,11 @@ def export_attendance_report(format: str = "xlsx", start_date: Optional[str] = N
         )
     
     elif format == "pdf":
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import letter
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+        from reportlab.lib.styles import getSampleStyleSheet
+        
         output = io.BytesIO()
         doc = SimpleDocTemplate(output, pagesize=letter)
         elements = []
