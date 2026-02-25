@@ -2,7 +2,7 @@
 Graha Fitness — Database Models & Setup (SQLAlchemy + SQLite)
 """
 
-from sqlalchemy import create_engine, Column, String, Integer, BigInteger, Date, Text, ForeignKey, DateTime, pool
+from sqlalchemy import create_engine, Column, String, Integer, BigInteger, Date, Text, ForeignKey, DateTime, pool, text, inspect
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from datetime import datetime, date
 import uuid
@@ -135,12 +135,33 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
+        # Self-healing migration for missing columns
+        inspector = inspect(engine)
+        
+        # Check members table
+        cols_members = [c['name'] for c in inspector.get_columns('members')]
+        if 'phone' not in cols_members:
+            with engine.connect() as conn:
+                conn.execute(text("ALTER TABLE members ADD COLUMN phone TEXT DEFAULT ''"))
+                conn.commit()
+                print("✅ Added missing 'phone' column to members table")
+
+        # Check transactions table
+        cols_tx = [c['name'] for c in inspector.get_columns('transactions')]
+        if 'item_id' not in cols_tx:
+            with engine.connect() as conn:
+                conn.execute(text("ALTER TABLE transactions ADD COLUMN item_id TEXT"))
+                conn.commit()
+                print("✅ Added missing 'item_id' column to transactions table")
+
         # Seed default users if empty
         if db.query(User).count() == 0:
             db.add(User(username="superadmin", password="admin123", role="superadmin", display_name="Super Admin"))
             db.add(User(username="admin", password="admin123", role="admin", display_name="Admin"))
             db.commit()
             print("✅ Default users created: superadmin / admin123, admin / admin123")
+    except Exception as e:
+        print(f"⚠️ Migration or seeding skipped: {e}")
     finally:
         db.close()
 

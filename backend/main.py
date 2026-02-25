@@ -208,7 +208,7 @@ def get_dashboard(user: User = Depends(get_current_user), db: Session = Depends(
     low_stock = db.query(StockItem).filter(StockItem.quantity <= StockItem.min_threshold).count()
 
     month_income = sum(
-        t.amount for t in db.query(Transaction).filter(Transaction.type == "income", Transaction.date.like(f"{month_prefix}%")).all()
+        (t.amount or 0) for t in db.query(Transaction).filter(Transaction.type == "income", Transaction.date.like(f"{month_prefix}%")).all()
     )
 
     # Expiring within 7 days
@@ -423,9 +423,9 @@ def transaction_summary(user: User = Depends(get_current_user), db: Session = De
     now = datetime.now()
     month_prefix = f"{now.year}-{now.month:02d}"
     month_txs = db.query(Transaction).filter(Transaction.date.like(f"{month_prefix}%")).all()
-    income = sum(t.amount for t in month_txs if t.type == "income")
-    expense = sum(t.amount for t in month_txs if t.type == "expense")
-    months = sorted(set(t.date[:7] for t in db.query(Transaction).all()), reverse=True)
+    income = sum((t.amount or 0) for t in month_txs if t.type == "income")
+    expense = sum((t.amount or 0) for t in month_txs if t.type == "expense")
+    months = sorted(set(t.date[:7] for t in db.query(Transaction).all() if t.date and len(t.date) >= 7), reverse=True)
     return {"income": income, "expense": expense, "profit": income - expense, "months": months}
 
 
