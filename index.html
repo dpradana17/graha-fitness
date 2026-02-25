@@ -49,12 +49,6 @@
 
     <!-- ==================== APP SHELL ==================== -->
     <div class="app-shell" id="appShell" style="display:none;">
-        <div id="pageLoader" class="page-loader">
-            <div class="loader-content">
-                <div class="loader-spinner"></div>
-                <p data-i18n="loading">Loading data...</p>
-            </div>
-        </div>
 
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
@@ -109,7 +103,12 @@
         <!-- Main Content -->
         <main class="main-content" id="mainContent">
             <header class="top-navbar">
-                <div class="top-navbar-left"></div>
+                <div class="top-navbar-left">
+                    <div id="inlineLoader" class="inline-loader hidden">
+                        <div class="loader-spinner-sm"></div>
+                        <span data-i18n="loading">Loading...</span>
+                    </div>
+                </div>
                 <div class="top-navbar-right">
                     <div id="syncIndicator" class="sync-status online" title="Online">
                         <span class="sync-icon">●</span>

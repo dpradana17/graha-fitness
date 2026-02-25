@@ -539,7 +539,7 @@
   }
 
   function setPageLoading(isLoading) {
-    const loader = document.getElementById('pageLoader');
+    const loader = document.getElementById('inlineLoader');
     if (loader) loader.classList.toggle('hidden', !isLoading);
   }
 
