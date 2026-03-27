@@ -8,7 +8,7 @@ from datetime import datetime, date
 import uuid
 import os
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./gymflow.db")
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./graha-fitness.db")
 
 # Fix for postgres:// prefixes and Supabase PgBouncer
 if DATABASE_URL and ("supabase" in DATABASE_URL or "postgres" in DATABASE_URL):

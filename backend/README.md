@@ -5,7 +5,7 @@ This backend is a REST API built with **FastAPI** (a modern Python framework).
 
 ### Technology Stack
 - **Framework**: FastAPI (high performance, async).
-- **Database**: SQLite (local single-file database: `gymflow.db`).
+- **Database**: SQLite (local single-file database: `graha-fitness.db`).
 - **ORM**: SQLAlchemy (database interaction).
 - **Authentication**: JWT (JSON Web Tokens) with `python-jose`.
 - **Security**: Password hashing with `passlib[bcrypt]`.
@@ -15,7 +15,7 @@ This backend is a REST API built with **FastAPI** (a modern Python framework).
 - `main.py`: The entry point. Defines API routes (`/api/login`, `/api/members`, etc.) and database models.
 - `database.py`: Handles database connection and table definitions.
 - `requirements.txt`: Lists all Python libraries needed.
-- `gymflow.db`: The actual database file (created automatically on first run).
+- `graha-fitness.db`: The actual database file (created automatically on first run).
 
 ---
 

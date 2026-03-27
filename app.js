@@ -1270,7 +1270,7 @@
   // ============================
   //     QR CODE & WHATSAPP
   // ============================
-  function generateQRData(memberId) { return `GYMFLOW-CHECKIN:${memberId}`; }
+  function generateQRData(memberId) { return `GRAHA-FITNESS-CHECKIN:${memberId}`; }
 
   async function showMemberQR(memberId) {
     const members = await apiGet('/members').catch(() => []);
@@ -1322,7 +1322,7 @@
     const dataUrl = canvas ? canvas.toDataURL('image/png') : (img ? img.src : null);
     if (dataUrl) {
       const link = document.createElement('a');
-      link.download = 'gymflow-qr.png';
+      link.download = 'graha-fitness-qr.png';
       link.href = dataUrl;
       link.click();
     }
@@ -1389,7 +1389,12 @@
     const btn = document.getElementById('btnScanCheckin');
     const raw = input.value.trim();
     if (!raw) return;
-    let memberId = raw.startsWith('GYMFLOW-CHECKIN:') ? raw.replace('GYMFLOW-CHECKIN:', '') : raw;
+    let memberId = raw;
+    if (raw.startsWith('GRAHA-FITNESS-CHECKIN:')) {
+      memberId = raw.replace('GRAHA-FITNESS-CHECKIN:', '');
+    } else if (raw.startsWith('GYMFLOW-CHECKIN:')) {
+      memberId = raw.replace('GYMFLOW-CHECKIN:', '');
+    }
 
     resultDiv.style.display = 'block';
     setLoading(btn, true);

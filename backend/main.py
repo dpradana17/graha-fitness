@@ -25,7 +25,7 @@ import os
 IS_PROD = os.getenv("RAILWAY_ENVIRONMENT") == "production" or os.getenv("ENV") == "production"
 
 # Config - using environment variables for security
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "gymflow-secret-key-change-in-production")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "graha-fitness-secret-key-change-in-production")
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 TOKEN_EXPIRE_HOURS = int(os.getenv("JWT_EXPIRE_HOURS", "24"))
 

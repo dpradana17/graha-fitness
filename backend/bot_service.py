@@ -42,11 +42,11 @@ class HealthCheckBot:
                     size_bytes = result.scalar()
                     return size_bytes / (1024 * 1024)
             else:
-                # SQLite - check file size of gymflow.db
-                db_path = os.path.join(BASE_DIR, "gymflow.db")
+                # SQLite - check file size of graha-fitness.db
+                db_path = os.path.join(BASE_DIR, "graha-fitness.db")
                 if not os.path.exists(db_path):
                     # Check in backend/ if not in root
-                    db_path = os.path.join(os.path.dirname(__file__), "gymflow.db")
+                    db_path = os.path.join(os.path.dirname(__file__), "graha-fitness.db")
                 
                 if os.path.exists(db_path):
                     size_bytes = os.path.getsize(db_path)
