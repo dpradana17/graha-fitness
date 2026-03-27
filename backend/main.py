@@ -50,13 +50,6 @@ app.add_middleware(
 def health_check():
     return {"status": "ok", "timestamp": datetime.now().isoformat()}
 
-@app.get("/api/health/report-now")
-async def trigger_health_report(user: User = Depends(require_superadmin)):
-    """Manually trigger a health report to Telegram (Super Admin only)."""
-    if bot_instance:
-        await bot_instance.send_report()
-        return {"status": "success", "message": "Health report sent to Telegram"}
-    return {"status": "error", "message": "Bot not initialized or configured"}
 
 # Static file configuration is moved to the bottom of the file to prevent routing conflicts
 import os
@@ -169,6 +162,15 @@ def require_superadmin(user: User = Depends(get_current_user)):
     if user.role != "superadmin":
         raise HTTPException(status_code=403, detail="Super Admin access required")
     return user
+
+
+@app.get("/api/health/report-now")
+async def trigger_health_report(user: User = Depends(require_superadmin)):
+    """Manually trigger a health report to Telegram (Super Admin only)."""
+    if bot_instance:
+        await bot_instance.send_report()
+        return {"status": "success", "message": "Health report sent to Telegram"}
+    return {"status": "error", "message": "Bot not initialized or configured"}
 
 
 # =====================

@@ -33,14 +33,20 @@ print(f"📡 Connecting to database: {safe_url}")
 # Connection arguments
 connect_args = {}
 if DATABASE_URL.startswith("postgresql"):
+    # Optimized for Supabase/PostgreSQL
     engine = create_engine(
         DATABASE_URL, 
-        poolclass=pool.NullPool,
+        pool_size=10, 
+        max_overflow=20,
+        pool_timeout=30,
+        pool_recycle=300,  # Recycle connections every 5 minutes
+        pool_pre_ping=True, # Verify connection health before use
         connect_args={"ssl_context": True}  # pg8000 way to enable SSL
     )
 else:
     engine = create_engine(
         DATABASE_URL, 
+        pool_recycle=3600,
         connect_args={"check_same_thread": False}
     )
 
