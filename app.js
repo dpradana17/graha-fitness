@@ -1309,7 +1309,7 @@
     if (!member) return;
     const phone = member.phone ? member.phone.replace(/^0/, '62') : '';
     const message = encodeURIComponent(
-      `💪 *GymFlow Check-in QR*\n\nHi ${member.name}!\nHere is your check-in QR code.\n\n🎫 Member ID: ${member.id}\n📅 Plan: ${member.plan}\n⏳ Expires: ${formatDate(member.endDate)}\n\nShow this QR code at the gym to check in!`
+      `💪 *Graha Fitness Check-in QR*\n\nHi ${member.name}!\nHere is your check-in QR code.\n\n🎫 Member ID: ${member.id}\n📅 Plan: ${member.plan}\n⏳ Expires: ${formatDate(member.endDate)}\n\nShow this QR code at the gym to check in!`
     );
     window.open(phone ? `https://wa.me/${phone}?text=${message}` : `https://wa.me/?text=${message}`, '_blank');
   }
