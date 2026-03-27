@@ -17,7 +17,8 @@ from datetime import datetime, date, timedelta
 from jose import jwt, JWTError
 import io
 
-from .database import init_db, get_db, User, Member, Attendance, Transaction, StockItem, StockMovement, generate_uuid
+from .database import init_db, get_db, User, Member, Attendance, Transaction, StockItem, StockMovement, generate_uuid, engine
+from .bot_service import init_health_bot, bot_instance
 
 import os
 # Detect production environment
@@ -48,6 +49,14 @@ app.add_middleware(
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "timestamp": datetime.now().isoformat()}
+
+@app.get("/api/health/report-now")
+async def trigger_health_report(user: User = Depends(require_superadmin)):
+    """Manually trigger a health report to Telegram (Super Admin only)."""
+    if bot_instance:
+        await bot_instance.send_report()
+        return {"status": "success", "message": "Health report sent to Telegram"}
+    return {"status": "error", "message": "Bot not initialized or configured"}
 
 # Static file configuration is moved to the bottom of the file to prevent routing conflicts
 import os
@@ -752,6 +761,10 @@ def on_startup():
     try:
         init_db()
         print("✅ Database initialized successfully.")
+        
+        # Initialize Health Check Bot
+        init_health_bot(engine)
+        print("🤖 Health Check Bot initialized.")
     except Exception as e:
         print(f"❌ Database initialization failed: {e}")
         # Don't raise here, allow the app to start so logs can be seen
