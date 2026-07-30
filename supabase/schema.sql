@@ -1,7 +1,16 @@
 -- Supabase Database Schema for Graha Fitness Dashboard Lite
 -- Exactly matching original SQLite schema columns & tables
 
--- 1. Members Table
+-- 1. Users Table (Authentication & Roles)
+CREATE TABLE IF NOT EXISTS public.users (
+  id VARCHAR(255) PRIMARY KEY,
+  username VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(255) DEFAULT 'admin',
+  display_name VARCHAR(255)
+);
+
+-- 2. Members Table
 CREATE TABLE IF NOT EXISTS public.members (
   id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -13,7 +22,7 @@ CREATE TABLE IF NOT EXISTS public.members (
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
 
--- 2. Attendance Table
+-- 3. Attendance Table
 CREATE TABLE IF NOT EXISTS public.attendance (
   id VARCHAR(255) PRIMARY KEY,
   member_id VARCHAR(255) REFERENCES public.members(id) ON DELETE CASCADE,
@@ -22,7 +31,7 @@ CREATE TABLE IF NOT EXISTS public.attendance (
   type VARCHAR(255)
 );
 
--- 3. Stock Items Table
+-- 4. Stock Items Table
 CREATE TABLE IF NOT EXISTS public.stock_items (
   id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -32,7 +41,7 @@ CREATE TABLE IF NOT EXISTS public.stock_items (
   min_threshold INTEGER DEFAULT 0
 );
 
--- 4. Stock Movements Table
+-- 5. Stock Movements Table
 CREATE TABLE IF NOT EXISTS public.stock_movements (
   id VARCHAR(255) PRIMARY KEY,
   item_id VARCHAR(255) REFERENCES public.stock_items(id) ON DELETE CASCADE,
@@ -42,7 +51,7 @@ CREATE TABLE IF NOT EXISTS public.stock_movements (
   note TEXT
 );
 
--- 5. Transactions Table
+-- 6. Transactions Table
 CREATE TABLE IF NOT EXISTS public.transactions (
   id VARCHAR(255) PRIMARY KEY,
   type VARCHAR(255),
@@ -56,11 +65,15 @@ CREATE TABLE IF NOT EXISTS public.transactions (
 );
 
 -- Row Level Security (RLS) Policies
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.stock_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.stock_movements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow read users" ON public.users FOR SELECT USING (true);
+CREATE POLICY "Allow write users" ON public.users FOR ALL USING (true);
 
 CREATE POLICY "Allow read members" ON public.members FOR SELECT USING (true);
 CREATE POLICY "Allow write members" ON public.members FOR ALL USING (true);
@@ -76,3 +89,9 @@ CREATE POLICY "Allow write stock_movements" ON public.stock_movements FOR ALL US
 
 CREATE POLICY "Allow read transactions" ON public.transactions FOR SELECT USING (true);
 CREATE POLICY "Allow write transactions" ON public.transactions FOR ALL USING (true);
+
+-- Seed Initial Users Data
+INSERT INTO public.users (id, username, password, role, display_name) VALUES
+  ('usr-1', 'superadmin', 'admin123', 'superadmin', 'Super Administrator'),
+  ('usr-2', 'admin', 'admin123', 'admin', 'Gym Staff Admin')
+ON CONFLICT (id) DO NOTHING;

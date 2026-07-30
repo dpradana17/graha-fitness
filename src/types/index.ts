@@ -1,3 +1,11 @@
+export interface User {
+  id: string;
+  username: string;
+  password?: string;
+  role: string;
+  display_name: string;
+}
+
 export interface Member {
   id: string;
   name: string;
