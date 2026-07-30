@@ -8,7 +8,6 @@ import {
   PackageAlert, 
   TrendingUp, 
   TrendingDown, 
-  Calendar,
   Search,
   Plus,
   QrCode,
@@ -18,7 +17,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   XCircle,
-  RefreshCw,
   PlusCircle,
   MinusCircle
 } from 'lucide-react';
@@ -26,7 +24,7 @@ import {
   INITIAL_MEMBERS, 
   INITIAL_ATTENDANCE, 
   INITIAL_FINANCE, 
-  INITIAL_STOCK 
+  INITIAL_STOCK_ITEMS 
 } from '@/utils/mockData';
 import { Member, AttendanceRecord, FinancialTransaction, StockItem } from '@/types';
 
@@ -38,7 +36,7 @@ export default function GrahaFitnessLiteDashboard() {
   const [members, setMembers] = useState<Member[]>(INITIAL_MEMBERS);
   const [attendance, setAttendance] = useState<AttendanceRecord[]>(INITIAL_ATTENDANCE);
   const [finance, setFinance] = useState<FinancialTransaction[]>(INITIAL_FINANCE);
-  const [stock, setStock] = useState<StockItem[]>(INITIAL_STOCK);
+  const [stockItems, setStockItems] = useState<StockItem[]>(INITIAL_STOCK_ITEMS);
 
   // Filter States
   const [searchMember, setSearchMember] = useState('');
@@ -60,10 +58,10 @@ export default function GrahaFitnessLiteDashboard() {
   // Financial Calculations
   const totalIncome = finance
     .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + Number(t.amount), 0);
   const totalExpense = finance
     .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + Number(t.amount), 0);
   const netProfit = totalIncome - totalExpense;
 
   // Handlers
@@ -78,12 +76,13 @@ export default function GrahaFitnessLiteDashboard() {
     if (foundMember) {
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const todayStr = now.toISOString().split('T')[0];
       const newRecord: AttendanceRecord = {
         id: `ATT-${Date.now().toString().slice(-4)}`,
-        memberName: foundMember.name,
-        memberId: foundMember.id,
-        checkInTime: timeStr,
-        plan: foundMember.plan
+        member_id: foundMember.id,
+        date: todayStr,
+        time: timeStr,
+        type: 'checkin'
       };
       setAttendance([newRecord, ...attendance]);
       setCheckInMsg({ text: `Check-in Berhasil: ${foundMember.name} (${foundMember.id})`, type: 'success' });
@@ -106,8 +105,8 @@ export default function GrahaFitnessLiteDashboard() {
       name: newMemberName,
       phone: newMemberPhone || '-',
       plan: newMemberPlan,
-      startDate: today.toISOString().split('T')[0],
-      expires: expDate.toISOString().split('T')[0],
+      start_date: today.toISOString().split('T')[0],
+      end_date: expDate.toISOString().split('T')[0],
       status: 'active'
     };
 
@@ -137,18 +136,17 @@ export default function GrahaFitnessLiteDashboard() {
   };
 
   const handleStockAdjust = (id: string, delta: number) => {
-    setStock(stock.map(item => {
+    setStockItems(stockItems.map(item => {
       if (item.id === id) {
         const newQty = Math.max(0, item.quantity + delta);
-        const newStatus = newQty === 0 ? 'out' : newQty <= 3 ? 'low' : 'safe';
-        return { ...item, quantity: newQty, status: newStatus };
+        return { ...item, quantity: newQty };
       }
       return item;
     }));
   };
 
   const filteredMembers = members.filter(
-    m => m.name.toLowerCase().includes(searchMember.toLowerCase()) || m.phone.includes(searchMember) || m.id.toLowerCase().includes(searchMember.toLowerCase())
+    m => m.name.toLowerCase().includes(searchMember.toLowerCase()) || m.phone?.includes(searchMember) || m.id.toLowerCase().includes(searchMember.toLowerCase())
   );
 
   return (
@@ -247,7 +245,7 @@ export default function GrahaFitnessLiteDashboard() {
             </button>
             <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-mono">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Online
+              Supabase
             </span>
           </div>
 
@@ -363,7 +361,7 @@ export default function GrahaFitnessLiteDashboard() {
                 </div>
                 <div className="flex items-baseline justify-between">
                   <span className="text-3xl font-extrabold text-amber-400">
-                    {stock.filter(s => s.status !== 'safe').length}
+                    {stockItems.filter(s => s.quantity <= s.min_threshold).length}
                   </span>
                   <span className="text-xs font-medium text-amber-400">
                     {lang === 'ID' ? 'Perlu Restock' : 'Need Action'}
@@ -387,22 +385,25 @@ export default function GrahaFitnessLiteDashboard() {
                 </div>
 
                 <div className="space-y-2.5">
-                  {attendance.map((rec) => (
-                    <div key={rec.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 border border-slate-800/60 hover:border-slate-700/80 transition">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs">
-                          {rec.memberName.charAt(0)}
+                  {attendance.map((rec) => {
+                    const memberObj = members.find(m => m.id === rec.member_id);
+                    return (
+                      <div key={rec.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 border border-slate-800/60 hover:border-slate-700/80 transition">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs">
+                            {memberObj?.name ? memberObj.name.charAt(0) : 'M'}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-slate-200 text-sm">{memberObj?.name || rec.member_id}</p>
+                            <p className="text-xs text-slate-500">{rec.member_id} • {rec.date}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-slate-200 text-sm">{rec.memberName}</p>
-                          <p className="text-xs text-slate-500">{rec.memberId} • {rec.plan}</p>
-                        </div>
+                        <span className="text-xs font-mono text-emerald-400 bg-emerald-950/40 px-2 py-1 rounded border border-emerald-800/30">
+                          {rec.time}
+                        </span>
                       </div>
-                      <span className="text-xs font-mono text-emerald-400 bg-emerald-950/40 px-2 py-1 rounded border border-emerald-800/30">
-                        {rec.checkInTime}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -427,10 +428,10 @@ export default function GrahaFitnessLiteDashboard() {
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-xs text-slate-400">
-                        <span>Expires: {m.expires}</span>
+                        <span>End: {m.end_date}</span>
                         <button 
                           onClick={() => {
-                            setMembers(members.map(item => item.id === m.id ? { ...item, status: 'active', expires: '2026-09-01' } : item));
+                            setMembers(members.map(item => item.id === m.id ? { ...item, status: 'active', end_date: '2026-09-01' } : item));
                           }}
                           className="text-emerald-400 hover:underline font-semibold"
                         >
@@ -488,7 +489,7 @@ export default function GrahaFitnessLiteDashboard() {
                     <th className="p-4">Nama</th>
                     <th className="p-4">No. HP</th>
                     <th className="p-4">Paket</th>
-                    <th className="p-4">Kedaluwarsa</th>
+                    <th className="p-4">End Date</th>
                     <th className="p-4">Status</th>
                     <th className="p-4 text-right">Aksi</th>
                   </tr>
@@ -500,7 +501,7 @@ export default function GrahaFitnessLiteDashboard() {
                       <td className="p-4 font-medium text-slate-200">{m.name}</td>
                       <td className="p-4 text-slate-400">{m.phone}</td>
                       <td className="p-4"><span className="bg-slate-800 px-2 py-1 rounded text-xs">{m.plan}</span></td>
-                      <td className="p-4 text-slate-400">{m.expires}</td>
+                      <td className="p-4 text-slate-400">{m.end_date}</td>
                       <td className="p-4">
                         <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full uppercase ${
                           m.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
@@ -637,7 +638,7 @@ export default function GrahaFitnessLiteDashboard() {
                       </div>
                     </div>
                     <span className={`font-mono font-bold text-sm ${trx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}`}>
-                      {trx.type === 'income' ? '+' : '-'} Rp {trx.amount.toLocaleString('id-ID')}
+                      {trx.type === 'income' ? '+' : '-'} Rp {Number(trx.amount).toLocaleString('id-ID')}
                     </span>
                   </div>
                 ))}
@@ -726,45 +727,49 @@ export default function GrahaFitnessLiteDashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {stock.map(item => (
-                <div key={item.id} className="p-4 rounded-2xl glass-panel glass-card-glow border border-slate-800/80 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{item.category}</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
-                      item.status === 'safe' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                      item.status === 'low' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                      'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                    }`}>
-                      {item.status}
-                    </span>
-                  </div>
+              {stockItems.map(item => {
+                const isLow = item.quantity <= item.min_threshold && item.quantity > 0;
+                const isOut = item.quantity === 0;
+                return (
+                  <div key={item.id} className="p-4 rounded-2xl glass-panel glass-card-glow border border-slate-800/80 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{item.category}</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                        !isLow && !isOut ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                        isLow ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                        'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                      }`}>
+                        {!isLow && !isOut ? 'safe' : isLow ? 'low' : 'out'}
+                      </span>
+                    </div>
 
-                  <div>
-                    <h4 className="font-bold text-slate-200 text-base">{item.name}</h4>
-                    <p className="text-xs text-slate-400 mt-0.5">Rp {item.price.toLocaleString('id-ID')} / {item.unit}</p>
-                  </div>
+                    <div>
+                      <h4 className="font-bold text-slate-200 text-base">{item.name}</h4>
+                      <p className="text-xs text-slate-400 mt-0.5">Min threshold: {item.min_threshold} {item.unit}</p>
+                    </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-800/60">
-                    <span className="text-xl font-extrabold text-slate-100">
-                      {item.quantity} <span className="text-xs font-normal text-slate-400">{item.unit}</span>
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => handleStockAdjust(item.id, -1)}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
-                      >
-                        <MinusCircle className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleStockAdjust(item.id, 1)}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 transition"
-                      >
-                        <PlusCircle className="w-4 h-4" />
-                      </button>
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-800/60">
+                      <span className="text-xl font-extrabold text-slate-100">
+                        {item.quantity} <span className="text-xs font-normal text-slate-400">{item.unit}</span>
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleStockAdjust(item.id, -1)}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                        >
+                          <MinusCircle className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleStockAdjust(item.id, 1)}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 transition"
+                        >
+                          <PlusCircle className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
